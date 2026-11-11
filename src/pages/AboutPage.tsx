@@ -13,10 +13,10 @@ export function AboutPage() {
         <div className="absolute inset-0 bg-ink/50" />
         <div className="container-je relative flex min-h-[50vh] items-end pb-14 pt-28">
           <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-white/70">
+            <p className="text-[11px] uppercase tracking-[0.28em] text-accent">
               About
             </p>
-            <h1 className="mt-4 max-w-3xl font-display text-5xl font-bold tracking-tight md:text-6xl">
+            <h1 className="mt-4 max-w-3xl font-display text-5xl font-semibold tracking-[0.06em] md:text-7xl">
               JUST EIGHT
             </h1>
           </div>
@@ -25,7 +25,7 @@ export function AboutPage() {
 
       <section className="container-je grid gap-12 py-16 md:grid-cols-2 md:py-24 lg:gap-20">
         <div>
-          <h2 className="font-display text-3xl font-bold tracking-tight">
+          <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
             Clothing for everyday elevation.
           </h2>
           <p className="mt-6 text-base leading-relaxed text-mute">

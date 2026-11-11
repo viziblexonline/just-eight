@@ -25,7 +25,7 @@ export function CartPage() {
 
   return (
     <div className="container-je py-10 md:py-14">
-      <h1 className="font-display text-4xl font-bold tracking-tight md:text-5xl">
+      <h1 className="font-display text-4xl font-semibold tracking-tight md:text-5xl">
         Shopping Cart
       </h1>
       <p className="mt-3 text-sm text-mute">

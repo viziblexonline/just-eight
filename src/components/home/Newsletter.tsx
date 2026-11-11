@@ -15,27 +15,27 @@ export function Newsletter() {
       setMessage('Please enter a valid email address.')
       return
     }
-    // Frontend-only for now — wire to email provider / Supabase later
     setStatus('success')
     setMessage('Thanks — you are on the list. (Demo confirmation only.)')
     setEmail('')
   }
 
   return (
-    <section className="border-y border-line bg-paper">
-      <div className="container-je py-16 md:py-20">
+    <section className="navy-panel relative overflow-hidden border-y border-accent/20">
+      <div className="pointer-events-none absolute left-1/2 top-0 h-px w-2/3 -translate-x-1/2 bg-gradient-to-r from-transparent via-accent to-transparent" />
+      <div className="container-je relative py-20 md:py-24">
         <Reveal className="mx-auto max-w-2xl text-center">
-          <p className="text-xs uppercase tracking-[0.2em] text-mute">Newsletter</p>
-          <h2 className="mt-4 font-display text-3xl font-bold tracking-tight md:text-4xl">
+          <p className="text-[11px] uppercase tracking-[0.28em] text-accent">Newsletter</p>
+          <h2 className="mt-4 font-display text-4xl font-semibold tracking-[0.04em] text-snow md:text-5xl">
             Stay ahead of the drop.
           </h2>
-          <p className="mt-4 text-sm leading-relaxed text-mute md:text-base">
+          <p className="mt-4 text-sm leading-relaxed text-white/65 md:text-base">
             Receive new arrivals, restocks, and brand updates. No spam — just
             considered notes from JUST EIGHT.
           </p>
           <form
             onSubmit={handleSubmit}
-            className="mt-8 flex flex-col gap-3 sm:flex-row"
+            className="mt-10 flex flex-col gap-3 sm:flex-row"
           >
             <input
               type="email"
@@ -46,7 +46,7 @@ export function Newsletter() {
               }}
               placeholder="Email address"
               aria-label="Email address"
-              className="w-full border border-line bg-snow px-4 py-3 text-sm outline-none transition-colors focus:border-ink"
+              className="w-full border border-white/15 bg-white/5 px-4 py-3.5 text-sm text-snow outline-none transition-colors placeholder:text-white/40 focus:border-accent"
             />
             <Button type="submit" className="shrink-0 sm:px-10">
               Subscribe
@@ -56,7 +56,7 @@ export function Newsletter() {
             <p
               className={[
                 'mt-4 text-sm',
-                status === 'success' ? 'text-ink' : 'text-red-600',
+                status === 'success' ? 'text-accent-soft' : 'text-red-300',
               ].join(' ')}
               role="status"
             >

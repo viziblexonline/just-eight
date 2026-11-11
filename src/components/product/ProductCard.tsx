@@ -19,7 +19,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
     <article
       ref={ref}
       className={[
-        'group reveal reveal-up hover-lift',
+        'group reveal reveal-up',
         inView ? 'is-visible' : '',
       ]
         .filter(Boolean)
@@ -32,17 +32,18 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             src={product.images[0]}
             alt={product.name}
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+            className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
           />
-          <div className="pointer-events-none absolute inset-0 bg-ink/0 transition-colors duration-500 group-hover:bg-ink/5" />
+          <div className="pointer-events-none absolute inset-0 bg-navy/0 transition-colors duration-500 group-hover:bg-navy/10" />
+          <div className="pointer-events-none absolute inset-2 border border-accent/0 transition-colors duration-500 group-hover:border-accent/40" />
           <div className="absolute left-3 top-3 flex flex-col gap-2">
             {product.newArrival ? (
-              <span className="bg-snow px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-ink">
+              <span className="bg-accent px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-ink">
                 New
               </span>
             ) : null}
             {onSale ? (
-              <span className="bg-ink px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-snow">
+              <span className="bg-navy px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-accent">
                 Sale
               </span>
             ) : null}
@@ -53,15 +54,15 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             ) : null}
           </div>
         </div>
-        <div className="mt-4 space-y-1.5 transition-transform duration-500 group-hover:translate-y-[-2px]">
-          <p className="text-[11px] uppercase tracking-[0.16em] text-mute">
+        <div className="mt-4 space-y-1.5">
+          <p className="text-[10px] uppercase tracking-[0.18em] text-mute">
             {product.category.replace('-', ' ')}
           </p>
-          <h3 className="font-display text-lg font-semibold tracking-tight transition-colors group-hover:text-ink-soft">
+          <h3 className="font-display text-xl font-semibold tracking-wide text-ink transition-colors group-hover:text-ink-soft">
             {product.name}
           </h3>
           <div className="flex items-center gap-2 text-sm">
-            <span className="font-medium">{formatPrice(price)}</span>
+            <span className="font-semibold text-ink">{formatPrice(price)}</span>
             {onSale ? (
               <span className="text-mute line-through">{formatPrice(product.price)}</span>
             ) : null}

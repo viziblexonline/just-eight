@@ -240,7 +240,7 @@ export function ShopPage() {
                 }
                 className={[
                   'border px-3 py-1.5 text-xs',
-                  active ? 'border-ink bg-ink text-snow' : 'border-line hover:border-ink',
+                    active ? 'border-navy bg-navy text-accent' : 'border-line hover:border-navy',
                 ].join(' ')}
               >
                 {preset.label}
@@ -263,8 +263,8 @@ export function ShopPage() {
                 className={[
                   'min-w-10 border px-3 py-2 text-xs uppercase tracking-wider transition-colors',
                   active
-                    ? 'border-ink bg-ink text-snow'
-                    : 'border-line hover:border-ink',
+                    ? 'border-navy bg-navy text-accent'
+                    : 'border-line hover:border-navy',
                 ].join(' ')}
               >
                 {size}
@@ -296,10 +296,10 @@ export function ShopPage() {
 
   return (
     <div className="container-je py-10 md:py-14">
-      <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div className="mb-12 flex flex-col gap-4 border-b border-line pb-8 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-mute">Shop</p>
-          <h1 className="mt-3 font-display text-4xl font-bold tracking-tight md:text-5xl">
+          <p className="text-[11px] uppercase tracking-[0.28em] text-accent">Shop</p>
+          <h1 className="mt-3 font-display text-4xl font-semibold tracking-[0.03em] md:text-6xl">
             {heading}
           </h1>
           <p className="mt-3 text-sm text-mute">
@@ -310,17 +310,17 @@ export function ShopPage() {
         <div className="flex items-center gap-3">
           <button
             type="button"
-            className="inline-flex items-center gap-2 border border-line px-4 py-2.5 text-xs uppercase tracking-[0.16em] lg:hidden"
+            className="inline-flex items-center gap-2 border border-line bg-snow/80 px-4 py-2.5 text-[11px] uppercase tracking-[0.16em] lg:hidden"
             onClick={() => setFiltersOpen(true)}
           >
             <Filter size={16} /> Filters
           </button>
-          <label className="flex items-center gap-3 text-xs uppercase tracking-[0.14em] text-mute">
+          <label className="flex items-center gap-3 text-[11px] uppercase tracking-[0.14em] text-mute">
             Sort
             <select
               value={sort}
               onChange={(e) => updateParam('sort', e.target.value)}
-              className="border border-line bg-snow px-3 py-2.5 text-xs uppercase tracking-[0.12em] text-ink outline-none"
+              className="border border-line bg-snow px-3 py-2.5 text-[11px] uppercase tracking-[0.12em] text-ink outline-none"
             >
               <option value="newest">Newest</option>
               <option value="popularity">Popularity</option>
@@ -331,8 +331,10 @@ export function ShopPage() {
         </div>
       </div>
 
-      <div className="grid gap-10 lg:grid-cols-[240px_1fr]">
-        <aside className="hidden lg:block">{filterPanel}</aside>
+      <div className="grid gap-10 lg:grid-cols-[260px_1fr]">
+        <aside className="hidden lg:block">
+          <div className="surface-panel sticky top-36 p-6">{filterPanel}</div>
+        </aside>
 
         <div>
           {loading ? (
@@ -381,7 +383,7 @@ export function ShopPage() {
           />
           <div className="absolute inset-y-0 left-0 w-[min(100%,340px)] overflow-y-auto bg-snow p-6 shadow-xl animate-fade-in">
             <div className="mb-6 flex items-center justify-between">
-              <p className="font-display text-xl font-semibold">Filters</p>
+              <p className="font-display text-2xl font-semibold">Filters</p>
               <button
                 type="button"
                 aria-label="Close"

@@ -10,12 +10,12 @@ export function Input({ label, error, id, className = '', ...props }: InputProps
 
   return (
     <label htmlFor={inputId} className="block space-y-2">
-      <span className="text-xs uppercase tracking-[0.14em] text-mute">{label}</span>
+      <span className="text-[11px] uppercase tracking-[0.16em] text-mute">{label}</span>
       <input
         id={inputId}
         className={[
-          'w-full border bg-snow px-4 py-3 text-sm text-ink outline-none transition-colors',
-          error ? 'border-red-500' : 'border-line focus:border-ink',
+          'w-full border bg-snow/80 px-4 py-3.5 text-sm text-ink outline-none transition-colors',
+          error ? 'border-red-500' : 'border-line focus:border-navy',
           className,
         ].join(' ')}
         {...props}

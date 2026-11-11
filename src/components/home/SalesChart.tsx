@@ -97,12 +97,12 @@ export function SalesChart() {
   }
 
   return (
-    <section className="border-t border-line bg-paper py-16 md:py-24">
+    <section className="border-t border-line bg-paper/80 py-16 md:py-24">
       <Reveal className="container-je">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-mute">Performance</p>
-            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight md:text-4xl">
+            <p className="text-[11px] uppercase tracking-[0.28em] text-accent">Performance</p>
+            <h2 className="mt-3 font-display text-4xl font-semibold tracking-[0.03em] md:text-5xl">
               Sales
             </h2>
             <p className="mt-3 max-w-xl text-sm text-mute">
@@ -110,7 +110,7 @@ export function SalesChart() {
               to the matching day.
             </p>
           </div>
-          <div className="flex border border-line bg-snow">
+          <div className="flex border border-line bg-snow/90">
             {RANGES.map((option) => (
               <button
                 key={option.id}
@@ -120,8 +120,8 @@ export function SalesChart() {
                   setActive(null)
                 }}
                 className={[
-                  'px-4 py-2.5 text-xs uppercase tracking-[0.14em]',
-                  range === option.id ? 'bg-ink text-snow' : 'text-mute hover:text-ink',
+                  'px-4 py-2.5 text-[11px] uppercase tracking-[0.16em]',
+                  range === option.id ? 'bg-navy text-accent' : 'text-mute hover:text-ink',
                 ].join(' ')}
               >
                 {option.label}
@@ -139,7 +139,7 @@ export function SalesChart() {
           />
         </div>
 
-        <div className="mt-8 border border-line bg-snow p-4 md:p-6">
+        <div className="mt-8 surface-panel p-4 md:p-6">
           <div className="relative">
           <svg
             viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
@@ -163,8 +163,8 @@ export function SalesChart() {
           >
             <defs>
               <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#0a0a0a" stopOpacity="0.18" />
-                <stop offset="100%" stopColor="#0a0a0a" stopOpacity="0" />
+                <stop offset="0%" stopColor="#c9a84c" stopOpacity="0.35" />
+                <stop offset="100%" stopColor="#c9a84c" stopOpacity="0" />
               </linearGradient>
             </defs>
 
@@ -194,7 +194,7 @@ export function SalesChart() {
 
             {area ? <path d={area} fill={`url(#${gradientId})`} /> : null}
             {line ? (
-              <path d={line} fill="none" stroke="#0a0a0a" strokeWidth="2" />
+              <path d={line} fill="none" stroke="#0b1c36" strokeWidth="2" />
             ) : null}
 
             {hovered && active !== null ? (
@@ -204,10 +204,10 @@ export function SalesChart() {
                   x2={xAt(active)}
                   y1={PAD.top}
                   y2={PAD.top + innerH}
-                  stroke="#0a0a0a"
+                  stroke="#c9a84c"
                   strokeDasharray="3 3"
                 />
-                <circle cx={xAt(active)} cy={yAt(hovered.revenue)} r="4.5" fill="#0a0a0a" />
+                <circle cx={xAt(active)} cy={yAt(hovered.revenue)} r="4.5" fill="#c9a84c" />
               </g>
             ) : null}
 
@@ -254,8 +254,8 @@ export function SalesChart() {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border border-line bg-snow p-5">
-      <p className="text-xs uppercase tracking-[0.16em] text-mute">{label}</p>
+    <div className="surface-panel p-5">
+      <p className="text-[11px] uppercase tracking-[0.16em] text-mute">{label}</p>
       <p className="mt-2 font-display text-2xl font-semibold md:text-3xl">{value}</p>
     </div>
   )

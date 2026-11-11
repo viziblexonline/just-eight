@@ -76,8 +76,9 @@ export function LoginPage() {
 
       {!isConfigured ? (
         <p className="mt-3 text-xs leading-relaxed text-mute">
-          Google login activates after you connect Supabase and enable the Google
-          provider. Manual email sign-in works now in local demo mode.
+          Google needs a `.env` file with your Supabase URL + anon key, and Google
+          enabled in Supabase Auth. See `docs/GOOGLE_AUTH.md`. Email sign-in still
+          works in local demo mode.
         </p>
       ) : null}
 

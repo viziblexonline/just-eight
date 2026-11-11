@@ -18,9 +18,10 @@ export function EmptyState({
   icon,
 }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
+    <div className="flex flex-col items-center justify-center px-6 py-24 text-center">
       {icon ? <div className="mb-6 text-mute">{icon}</div> : null}
-      <h2 className="font-display text-2xl font-semibold tracking-tight">{title}</h2>
+      <div className="gold-rule mb-6" />
+      <h2 className="font-display text-3xl font-semibold tracking-[0.03em]">{title}</h2>
       <p className="mt-3 max-w-md text-sm leading-relaxed text-mute">{description}</p>
       {actionLabel && actionTo ? (
         <Link to={actionTo} className="mt-8">

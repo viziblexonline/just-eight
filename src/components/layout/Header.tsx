@@ -50,88 +50,110 @@ export function Header() {
   }, [open])
 
   return (
-    <header
-      className={[
-        'sticky top-0 z-50 border-b transition-colors duration-300',
-        scrolled || open
-          ? 'border-line bg-snow/95 backdrop-blur-md'
-          : 'border-transparent bg-snow/80 backdrop-blur-sm',
-      ].join(' ')}
-    >
-      <div className="container-je relative flex h-24 items-center justify-between md:h-28">
-        <button
-          type="button"
-          className="grid h-10 w-10 place-items-center lg:hidden"
-          aria-label={open ? 'Close menu' : 'Open menu'}
-          onClick={() => setOpen((v) => !v)}
-        >
-          {open ? <X size={22} /> : <Menu size={22} />}
-        </button>
-
-        <nav className="hidden items-center gap-6 lg:flex xl:gap-8">
-          {navLinks.map((link) => {
-            const active = isNavActive(link.to, location.pathname, location.search)
-            return (
-              <Link
-                key={link.to}
-                to={link.to}
-                aria-current={active ? 'page' : undefined}
-                className={[
-                  'text-xs uppercase tracking-[0.18em] transition-colors',
-                  active ? 'text-ink' : 'text-mute hover:text-ink',
-                ].join(' ')}
-              >
-                {link.label}
-              </Link>
-            )
-          })}
-          {showAdmin ? (
-            <Link
-              to="/admin/products/new"
-              className="text-xs uppercase tracking-[0.18em] text-mute transition-colors hover:text-ink"
-            >
-              Admin
-            </Link>
-          ) : null}
-        </nav>
-
-        <Logo
-          className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2"
-          imgClassName="h-20 w-auto drop-shadow-sm md:h-28"
-          priority
-        />
-
-        <div className="flex items-center gap-1 md:gap-2">
-          <SearchBox />
-          <Link
-            to={user ? '/account' : '/login'}
-            className="grid h-10 w-10 place-items-center text-ink transition-opacity hover:opacity-70"
-            aria-label={user ? 'Account' : 'Sign in'}
-          >
-            <User size={20} />
-          </Link>
-          <Link
-            to="/cart"
-            className="relative grid h-10 w-10 place-items-center text-ink transition-opacity hover:opacity-70"
-            aria-label={`Shopping cart, ${itemCount} items`}
-          >
-            <ShoppingBag size={20} />
-            {itemCount > 0 ? (
-              <span className="absolute right-1 top-1 grid h-4 min-w-4 place-items-center bg-ink px-1 text-[10px] text-snow">
-                {itemCount > 99 ? '99+' : itemCount}
-              </span>
-            ) : null}
+    <header className="sticky top-0 z-50">
+      <div className="h-0.5 bg-gradient-to-r from-transparent via-accent to-transparent" />
+      <div className="navy-panel">
+        <div className="container-je flex h-8 items-center justify-between text-[10px] uppercase tracking-[0.22em] text-white/65">
+          <span>Complimentary shipping over $150</span>
+          <Link to="/shop?sort=newest" className="hidden text-accent hover:text-gold-bright sm:inline">
+            New season edit
           </Link>
         </div>
       </div>
 
       <div
         className={[
-          'fixed inset-x-0 top-24 bottom-0 z-40 bg-snow transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] md:top-28 lg:hidden',
+          'border-b transition-all duration-300',
+          scrolled || open
+            ? 'border-accent/20 bg-navy-deep/97 backdrop-blur-md'
+            : 'border-white/5 bg-navy/95 backdrop-blur-sm',
+        ].join(' ')}
+      >
+        <div className="container-je relative grid h-24 grid-cols-[1fr_auto_1fr] items-center gap-3 md:h-28 md:gap-6">
+          <div className="flex items-center justify-start gap-2">
+            <button
+              type="button"
+              className="grid h-10 w-10 place-items-center text-snow lg:hidden"
+              aria-label={open ? 'Close menu' : 'Open menu'}
+              onClick={() => setOpen((v) => !v)}
+            >
+              {open ? <X size={22} /> : <Menu size={22} />}
+            </button>
+            <nav className="hidden items-center gap-6 lg:flex xl:gap-8">
+              {navLinks.map((link) => {
+                const active = isNavActive(link.to, location.pathname, location.search)
+                return (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    aria-current={active ? 'page' : undefined}
+                    className={[
+                      'relative text-[11px] uppercase tracking-[0.22em] transition-colors',
+                      active ? 'text-accent' : 'text-white/70 hover:text-snow',
+                    ].join(' ')}
+                  >
+                    {link.label}
+                    {active ? (
+                      <span className="absolute -bottom-2 left-0 h-px w-full bg-accent" />
+                    ) : null}
+                  </Link>
+                )
+              })}
+              {showAdmin ? (
+                <Link
+                  to="/admin/products/new"
+                  className="text-[11px] uppercase tracking-[0.22em] text-white/50 transition-colors hover:text-accent"
+                >
+                  Admin
+                </Link>
+              ) : null}
+            </nav>
+          </div>
+
+          <Logo
+            className="relative z-10 justify-self-center drop-shadow-[0_0_18px_rgba(201,168,76,0.35)]"
+            imgClassName="h-[4.75rem] w-auto md:h-24"
+            priority
+          />
+
+          <div className="flex items-center justify-end gap-0.5 text-snow md:gap-1">
+            <SearchBox />
+            <Link
+              to={user ? '/account' : '/login'}
+              className="grid h-10 w-10 place-items-center transition-opacity hover:opacity-70"
+              aria-label={user ? 'Account' : 'Sign in'}
+            >
+              <User size={19} strokeWidth={1.6} />
+            </Link>
+            <Link
+              to="/cart"
+              className="relative grid h-10 w-10 place-items-center transition-opacity hover:opacity-70"
+              aria-label={`Shopping cart, ${itemCount} items`}
+            >
+              <ShoppingBag size={19} strokeWidth={1.6} />
+              {itemCount > 0 ? (
+                <span className="absolute right-1 top-1 grid h-4 min-w-4 place-items-center bg-accent px-1 text-[10px] font-semibold text-ink">
+                  {itemCount > 99 ? '99+' : itemCount}
+                </span>
+              ) : null}
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className={[
+          'fixed inset-x-0 top-[calc(0.125rem+2rem+6rem)] bottom-0 z-40 navy-panel transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] md:top-[calc(0.125rem+2rem+7rem)] lg:hidden',
           open ? 'translate-x-0' : '-translate-x-full',
         ].join(' ')}
       >
-        <nav className="container-je flex flex-col gap-1 py-8">
+        <nav className="container-je flex flex-col gap-1 py-10">
+          <div className="mb-6 flex justify-center border-b border-white/10 pb-6">
+            <Logo
+              imgClassName="h-28 w-auto"
+              onClick={() => setOpen(false)}
+            />
+          </div>
           {navLinks.map((link) => {
             const active = isNavActive(link.to, location.pathname, location.search)
             return (
@@ -141,8 +163,8 @@ export function Header() {
                 aria-current={active ? 'page' : undefined}
                 onClick={() => setOpen(false)}
                 className={[
-                  'border-b border-line py-4 font-display text-2xl font-semibold tracking-tight',
-                  active ? 'text-ink' : 'text-mute',
+                  'border-b border-white/10 py-5 font-display text-3xl tracking-wide',
+                  active ? 'text-accent' : 'text-snow',
                 ].join(' ')}
               >
                 {link.label}
@@ -152,7 +174,7 @@ export function Header() {
           <Link
             to={user ? '/account' : '/login'}
             onClick={() => setOpen(false)}
-            className="border-b border-line py-4 font-display text-2xl font-semibold tracking-tight"
+            className="border-b border-white/10 py-5 font-display text-3xl tracking-wide text-snow"
           >
             {user ? 'Account' : 'Sign in'}
           </Link>
@@ -160,7 +182,7 @@ export function Header() {
             <Link
               to="/admin/products/new"
               onClick={() => setOpen(false)}
-              className="border-b border-line py-4 font-display text-2xl font-semibold tracking-tight"
+              className="border-b border-white/10 py-5 font-display text-3xl tracking-wide text-snow"
             >
               Admin
             </Link>
@@ -169,7 +191,7 @@ export function Header() {
             <Link
               to="/signup"
               onClick={() => setOpen(false)}
-              className="border-b border-line py-4 text-sm uppercase tracking-[0.16em] text-mute"
+              className="border-b border-white/10 py-5 text-[11px] uppercase tracking-[0.18em] text-white/55"
             >
               Create account
             </Link>
@@ -177,7 +199,7 @@ export function Header() {
           <Link
             to="/faq"
             onClick={() => setOpen(false)}
-            className="border-b border-line py-4 text-sm uppercase tracking-[0.16em] text-mute"
+            className="border-b border-white/10 py-5 text-[11px] uppercase tracking-[0.18em] text-white/55"
           >
             FAQ
           </Link>

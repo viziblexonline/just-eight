@@ -29,7 +29,7 @@ export function HomePage() {
       <Hero />
       <HomeIntro />
       {loading ? (
-        <div className="container-je py-20 text-center text-sm text-mute">
+        <div className="container-je py-20 text-center text-[11px] uppercase tracking-[0.2em] text-mute">
           Loading collection…
         </div>
       ) : (

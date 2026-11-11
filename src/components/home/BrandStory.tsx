@@ -12,10 +12,17 @@ export function BrandStory() {
             alt="JUST EIGHT brand atmosphere"
             className="h-full w-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.03]"
           />
+          <div className="absolute inset-4 border border-accent/35 pointer-events-none" />
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-navy-deep/80 to-transparent p-6 md:p-8">
+            <p className="text-[10px] uppercase tracking-[0.24em] text-accent">
+              Crafted with intention
+            </p>
+          </div>
         </Reveal>
         <Reveal delay={120}>
-          <p className="text-xs uppercase tracking-[0.2em] text-mute">Our story</p>
-          <h2 className="mt-4 font-display text-3xl font-bold tracking-tight md:text-5xl">
+          <div className="gold-rule" />
+          <p className="mt-6 text-[11px] uppercase tracking-[0.28em] text-accent">Our story</p>
+          <h2 className="mt-4 font-display text-4xl font-semibold tracking-[0.03em] md:text-5xl">
             Built for the way you move through the day.
           </h2>
           <p className="mt-6 text-base leading-relaxed text-mute">

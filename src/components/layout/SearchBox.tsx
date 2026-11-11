@@ -122,18 +122,18 @@ export function SearchBox() {
     <div className="relative" ref={panelRef}>
       <button
         type="button"
-        className="grid h-10 w-10 place-items-center text-ink transition-opacity hover:opacity-70"
+        className="grid h-10 w-10 place-items-center text-snow transition-opacity hover:opacity-70"
         aria-label="Search products"
         aria-expanded={open}
         aria-controls={open ? listId : undefined}
         onClick={() => setOpen((value) => !value)}
       >
-        <Search size={20} />
+        <Search size={19} strokeWidth={1.6} />
       </button>
 
       {open ? (
-        <div className="absolute right-0 top-full z-[60] mt-2 w-[min(92vw,20rem)] border border-line bg-snow p-2.5 shadow-lg animate-fade-in">
-          <form onSubmit={onSubmit} className="flex items-center gap-2 border border-line px-2.5 py-1.5">
+        <div className="absolute right-0 top-full z-[60] mt-2 w-[min(92vw,20rem)] border border-accent/30 bg-snow p-2.5 shadow-xl animate-fade-in">
+          <form onSubmit={onSubmit} className="flex items-center gap-2 border border-line bg-paper px-2.5 py-1.5">
             <Search size={14} className="shrink-0 text-mute" aria-hidden />
             <input
               ref={inputRef}
@@ -142,7 +142,7 @@ export function SearchBox() {
               onChange={(event) => setQuery(event.target.value)}
               onKeyDown={onKeyDown}
               placeholder="Search products…"
-              className="w-full bg-transparent text-sm outline-none placeholder:text-mute"
+              className="w-full bg-transparent text-sm text-ink outline-none placeholder:text-mute"
               aria-autocomplete="list"
               aria-controls={listId}
               aria-activedescendant={
@@ -175,7 +175,7 @@ export function SearchBox() {
                   <p className="text-xs text-ink">No products found</p>
                   <button
                     type="button"
-                    className="mt-2 text-[10px] uppercase tracking-[0.14em] text-mute hover:text-ink"
+                    className="mt-2 text-[10px] uppercase tracking-[0.14em] text-mute hover:text-accent"
                     onClick={() => goToShop()}
                   >
                     Browse all
@@ -193,7 +193,7 @@ export function SearchBox() {
                           id={`${listId}-option-${index}`}
                           className={[
                             'flex w-full items-center gap-2.5 px-2.5 py-2 text-left transition-colors',
-                            active ? 'bg-mist' : 'hover:bg-paper',
+                            active ? 'bg-accent-soft' : 'hover:bg-paper',
                           ].join(' ')}
                           onMouseEnter={() => setActiveIndex(index)}
                           onClick={() => goToProduct(product.slug)}
@@ -211,7 +211,7 @@ export function SearchBox() {
                               {getCategoryName(product.category)}
                             </span>
                           </span>
-                          <span className="shrink-0 text-xs font-medium">
+                          <span className="shrink-0 text-xs font-semibold text-ink">
                             {formatPrice(price)}
                           </span>
                         </button>
@@ -225,7 +225,7 @@ export function SearchBox() {
                 <div className="border-t border-line px-2.5 py-2">
                   <button
                     type="button"
-                    className="text-[10px] uppercase tracking-[0.14em] text-mute transition-colors hover:text-ink"
+                    className="text-[10px] uppercase tracking-[0.14em] text-mute transition-colors hover:text-accent"
                     onClick={() => goToShop()}
                   >
                     View all results

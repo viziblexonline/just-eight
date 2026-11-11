@@ -8,6 +8,7 @@ type LogoProps = {
   className?: string
   imgClassName?: string
   priority?: boolean
+  onClick?: () => void
 }
 
 export function Logo({
@@ -15,14 +16,15 @@ export function Logo({
   className = '',
   imgClassName = 'h-10 w-auto md:h-12',
   priority = false,
+  onClick,
 }: LogoProps) {
   const image = (
     <img
       src={LOGO_SRC}
       alt="Just Eight"
       className={['object-contain', imgClassName].filter(Boolean).join(' ')}
-      width={160}
-      height={160}
+      width={200}
+      height={200}
       decoding="async"
       loading={priority ? 'eager' : 'lazy'}
     />
@@ -39,7 +41,8 @@ export function Logo({
   return (
     <Link
       to={to}
-      className={['inline-flex items-center transition-opacity hover:opacity-80', className]
+      onClick={onClick}
+      className={['inline-flex items-center transition-opacity hover:opacity-90', className]
         .filter(Boolean)
         .join(' ')}
       aria-label="Just Eight home"

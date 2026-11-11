@@ -27,15 +27,16 @@ const legalLinks = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-line bg-ink text-snow">
-      <div className="container-je grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-4 lg:gap-8">
-        <div className="space-y-4 lg:col-span-1">
-          <Logo imgClassName="h-14 w-auto" />
-          <p className="max-w-xs text-sm leading-relaxed text-white/65">
+    <footer className="navy-panel border-t border-accent/20">
+      <div className="container-je grid gap-14 py-20 md:grid-cols-2 lg:grid-cols-4 lg:gap-10">
+        <div className="space-y-5 lg:col-span-1">
+          <Logo imgClassName="h-20 w-auto" />
+          <div className="gold-rule" />
+          <p className="max-w-xs text-sm leading-relaxed text-white/60">
             Premium clothing for everyday elevation. A modern wardrobe built on
             clean lines, quality materials, and considered design.
           </p>
-          <div className="flex gap-3 pt-2">
+          <div className="flex gap-2.5 pt-1">
             <SocialLink href="https://instagram.com" label="Instagram">
               IG
             </SocialLink>
@@ -54,9 +55,11 @@ export function Footer() {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="container-je flex flex-col gap-3 py-6 text-xs text-white/50 md:flex-row md:items-center md:justify-between">
+        <div className="container-je flex flex-col gap-3 py-7 text-[11px] uppercase tracking-[0.14em] text-white/40 md:flex-row md:items-center md:justify-between">
           <p>© 2026 JUST EIGHT. All rights reserved.</p>
-          <p>Demo catalog — prices and policies are placeholders.</p>
+          <p className="normal-case tracking-normal text-white/30">
+            Demo catalog — prices and policies are placeholders.
+          </p>
         </div>
       </div>
     </footer>
@@ -72,13 +75,13 @@ function FooterColumn({
 }) {
   return (
     <div>
-      <p className="text-xs uppercase tracking-[0.18em] text-white/45">{title}</p>
-      <ul className="mt-5 space-y-3">
+      <p className="text-[11px] uppercase tracking-[0.22em] text-accent">{title}</p>
+      <ul className="mt-6 space-y-3.5">
         {links.map((link) => (
           <li key={link.to}>
             <Link
               to={link.to}
-              className="text-sm text-white/80 transition-colors hover:text-white"
+              className="text-sm text-white/70 transition-colors hover:text-accent"
             >
               {link.label}
             </Link>
@@ -104,7 +107,7 @@ function SocialLink({
       target="_blank"
       rel="noreferrer"
       aria-label={label}
-      className="grid h-10 w-10 place-items-center border border-white/20 text-[10px] font-semibold tracking-[0.12em] transition-colors hover:border-white hover:bg-white hover:text-ink"
+      className="grid h-10 w-10 place-items-center border border-accent/35 text-[10px] font-semibold tracking-[0.14em] text-accent transition-colors hover:border-accent hover:bg-accent hover:text-ink"
     >
       {children}
     </a>

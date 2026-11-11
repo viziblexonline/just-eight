@@ -48,7 +48,7 @@ export function Hero() {
       : [{ id: 'fallback', name: 'JUST EIGHT', image: FALLBACK_IMAGE }]
 
   return (
-    <section className="relative min-h-[88vh] overflow-hidden bg-ink text-snow">
+    <section className="relative min-h-[92vh] overflow-hidden bg-navy-deep text-snow">
       <div className="absolute inset-0">
         {displaySlides.map((slide, index) => {
           const isActive = index === active || (slides.length === 0 && index === 0)
@@ -61,14 +61,14 @@ export function Hero() {
               ].join(' ')}
               aria-hidden={!isActive}
             >
-              {/* Soft fill so there are no black side bars */}
+              {/* Sharp edge fill — no blur veil */}
               <img
                 src={slide.image}
                 alt=""
-                className="absolute inset-0 h-full w-full object-cover object-center opacity-70 blur-xl"
+                className="absolute inset-0 h-full w-full scale-105 object-cover object-center opacity-40"
                 loading={index === 0 ? 'eager' : 'lazy'}
               />
-              {/* Full product shown without zoom crop */}
+              {/* Clear main product */}
               <img
                 src={slide.image}
                 alt=""
@@ -80,49 +80,55 @@ export function Hero() {
         })}
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-ink/15" />
-      <div className="absolute inset-0 bg-gradient-to-r from-ink/65 via-transparent to-transparent" />
+      {/* Bottom fade only — keeps text readable without covering the slide */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-navy-deep/85 via-navy-deep/35 to-transparent" />
 
-      <div className="container-je relative flex min-h-[88vh] flex-col justify-end pb-16 pt-28 md:pb-24">
-        <h1 className="animate-fade-up max-w-4xl font-display text-5xl font-extrabold leading-[0.95] tracking-tight md:text-7xl lg:text-8xl">
-          ELEVATE YOUR EVERYDAY.
-        </h1>
-        <p
-          className="animate-fade-up mt-6 max-w-xl text-base leading-relaxed text-white/75 md:text-lg"
-          style={{ animationDelay: '100ms' }}
-        >
-          A modern clothing collection of tees, hoodies, outerwear, and
-          sportswear — designed with clarity, quality, and quiet confidence.
-        </p>
-        <div
-          className="animate-fade-up mt-10 flex flex-wrap gap-4"
-          style={{ animationDelay: '180ms' }}
-        >
-          <Link
-            to="/shop"
-            className="interactive inline-flex items-center justify-center bg-snow px-8 py-4 text-sm font-medium uppercase tracking-[0.18em] text-ink hover:bg-mist"
+      <div className="container-je relative flex min-h-[92vh] flex-col justify-end pb-16 pt-28 md:pb-24">
+        <div className="max-w-xl">
+          <p className="animate-fade-up text-[11px] uppercase tracking-[0.32em] text-accent">
+            JUST EIGHT · Luxury ready-to-wear
+          </p>
+          <h1 className="animate-fade-up mt-5 font-display text-5xl font-semibold leading-[1.05] tracking-[0.04em] md:text-7xl lg:text-8xl">
+            Elevate your
+            <span className="gold-text"> everyday.</span>
+          </h1>
+          <p
+            className="animate-fade-up mt-6 text-base leading-relaxed text-white/85 md:max-w-lg md:text-lg"
+            style={{ animationDelay: '100ms' }}
           >
-            Shop Now
-          </Link>
-          <Link to="/shop?sort=newest">
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-snow text-snow hover:bg-snow hover:text-ink"
+            Tees, hoodies, outerwear, and sportswear — cut with clarity, quality,
+            and quiet confidence.
+          </p>
+          <div
+            className="animate-fade-up mt-10 flex flex-wrap gap-3"
+            style={{ animationDelay: '180ms' }}
+          >
+            <Link
+              to="/shop"
+              className="interactive inline-flex items-center justify-center bg-accent px-8 py-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-ink hover:bg-gold-bright"
             >
-              Explore Collection
-            </Button>
-          </Link>
+              Shop Now
+            </Link>
+            <Link to="/shop?sort=newest">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-accent/50 text-snow hover:border-accent hover:bg-accent hover:text-ink"
+              >
+                Explore Collection
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {!loading && slides.length > 1 ? (
-          <div className="mt-8 flex flex-wrap items-center gap-3">
+          <div className="mt-10 flex flex-wrap items-center gap-5 md:mt-12">
             {current ? (
-              <p className="text-[10px] uppercase tracking-[0.18em] text-white/55">
-                {current.name}
+              <p className="text-[10px] uppercase tracking-[0.22em] text-white/70">
+                Now showing · {current.name}
               </p>
             ) : null}
-            <div className="flex gap-1.5" role="tablist" aria-label="Product slideshow">
+            <div className="flex gap-2" role="tablist" aria-label="Product slideshow">
               {slides.map((slide, index) => (
                 <button
                   key={slide.id}
@@ -132,7 +138,7 @@ export function Hero() {
                   aria-label={`Show ${slide.name}`}
                   className={[
                     'h-1.5 transition-all duration-500',
-                    index === active ? 'w-8 bg-snow' : 'w-3 bg-white/35 hover:bg-white/60',
+                    index === active ? 'w-12 bg-accent' : 'w-4 bg-white/40 hover:bg-accent/70',
                   ].join(' ')}
                   onClick={() => setActive(index)}
                 />

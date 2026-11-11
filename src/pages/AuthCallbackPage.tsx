@@ -16,7 +16,30 @@ export function AuthCallbackPage() {
         return
       }
 
-      const { error: sessionError } = await supabase.auth.getSession()
+      const url = new URL(window.location.href)
+      const code = url.searchParams.get('code')
+      const oauthError =
+        url.searchParams.get('error_description') ||
+        url.searchParams.get('error')
+
+      if (oauthError) {
+        if (active) setError(oauthError)
+        return
+      }
+
+      if (code) {
+        const { error: exchangeError } =
+          await supabase.auth.exchangeCodeForSession(code)
+        if (!active) return
+        if (exchangeError) {
+          setError(exchangeError.message)
+          return
+        }
+        navigate('/account', { replace: true })
+        return
+      }
+
+      const { data, error: sessionError } = await supabase.auth.getSession()
       if (!active) return
 
       if (sessionError) {
@@ -24,7 +47,27 @@ export function AuthCallbackPage() {
         return
       }
 
-      navigate('/account', { replace: true })
+      if (data.session) {
+        navigate('/account', { replace: true })
+        return
+      }
+
+      // Wait briefly for hash/session hydration from the OAuth redirect
+      await new Promise((resolve) => window.setTimeout(resolve, 400))
+      const { data: again, error: againError } = await supabase.auth.getSession()
+      if (!active) return
+
+      if (againError) {
+        setError(againError.message)
+        return
+      }
+
+      if (again.session) {
+        navigate('/account', { replace: true })
+        return
+      }
+
+      setError('No session was created. Try signing in with Google again.')
     }
 
     void finish()
@@ -48,7 +91,7 @@ export function AuthCallbackPage() {
   return (
     <div className="container-je py-20 text-center">
       <p className="text-sm uppercase tracking-[0.18em] text-mute">
-        Completing sign-in…
+        Completing Google sign-in…
       </p>
     </div>
   )

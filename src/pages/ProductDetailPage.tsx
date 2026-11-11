@@ -133,7 +133,7 @@ export function ProductDetailPage() {
             {getCategoryName(product.category)}
             {product.isDemo ? ' · Demo product' : ''}
           </p>
-          <h1 className="mt-3 font-display text-4xl font-bold tracking-tight md:text-5xl">
+          <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight md:text-5xl">
             {product.name}
           </h1>
           <div className="mt-4 flex items-center gap-3">
@@ -182,8 +182,8 @@ export function ProductDetailPage() {
                   className={[
                     'min-w-12 border px-3 py-2.5 text-xs uppercase tracking-wider transition-colors',
                     size === s
-                      ? 'border-ink bg-ink text-snow'
-                      : 'border-line hover:border-ink',
+                      ? 'border-navy bg-navy text-accent'
+                      : 'border-line hover:border-navy',
                   ].join(' ')}
                 >
                   {s}
@@ -255,7 +255,7 @@ export function ProductDetailPage() {
 
       {related.length > 0 ? (
         <section className="mt-20 border-t border-line pt-16 md:mt-28">
-          <h2 className="mb-10 font-display text-3xl font-bold tracking-tight">
+          <h2 className="mb-10 font-display text-3xl font-semibold tracking-tight md:text-4xl">
             Related Products
           </h2>
           <ProductGrid products={related} />
