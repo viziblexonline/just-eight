@@ -41,8 +41,8 @@ VITE_SUPABASE_ANON_KEY=paste-your-anon-key-here
 ## 4. Allow app redirect URLs (required for live site)
 
 1. Open [Auth → URL Configuration](https://supabase.com/dashboard/project/srtzbpagjuwvbywnwuqg/auth/url-configuration)
-2. **Site URL:** `https://justeight.co.uk`
-3. **Redirect URLs** (add all):
+2. **Site URL:** `https://justeight.co.uk` (either apex or www is fine)
+3. **Redirect URLs** (add all — both hosts must be listed so Google works on apex and www):
    - `https://justeight.co.uk/auth/callback`
    - `https://www.justeight.co.uk/auth/callback`
    - `http://localhost:5173/auth/callback`

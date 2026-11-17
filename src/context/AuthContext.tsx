@@ -224,14 +224,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    const host = window.location.hostname
-    if (host === 'www.justeight.co.uk') {
-      window.location.replace(
-        `https://justeight.co.uk/login${window.location.search}`,
-      )
-      return { ok: true, message: 'Redirecting…' }
-    }
-
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {

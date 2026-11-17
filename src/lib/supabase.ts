@@ -19,12 +19,8 @@ export const supabase: SupabaseClient | null = isSupabaseConfigured
     })
   : null
 
-/** Keep OAuth start + return on the same production host (www → apex). */
+/** Same host for OAuth start + return (apex and www both work). */
 export function getOAuthRedirectTo(): string {
   if (typeof window === 'undefined') return '/auth/callback'
-  const host = window.location.hostname
-  if (host === 'justeight.co.uk' || host === 'www.justeight.co.uk') {
-    return 'https://justeight.co.uk/auth/callback'
-  }
   return `${window.location.origin}/auth/callback`
 }
