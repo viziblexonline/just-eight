@@ -50,19 +50,23 @@ VITE_SUPABASE_ANON_KEY=paste-your-anon-key-here
 
 ## 5. Admin signup/login email alerts
 
-The storefront notifies **justeightuk@gmail.com** when a customer:
+The storefront notifies **justeightsuk@gmail.com** when a customer:
 
 - Signs up with email
 - Logs in with email
 - Signs in / signs up with Google
 
+On **signup**, the customer also gets a **Just Eight** welcome reply.
+
 First alert uses [FormSubmit](https://formsubmit.co). Check that Gmail inbox once and **confirm the activation email**, then alerts will arrive for every signup/login.
+
+For signup confirmation emails From: **Just Eight &lt;justeightsuk@gmail.com&gt;**, set up Gmail SMTP — see [EMAIL.md](./EMAIL.md).
 
 ## 6. Test
 
 1. Open `https://justeight.co.uk/login` (or local)
 2. Click **Continue with Google**
 3. You should land on `/account`
-4. Check `justeightuk@gmail.com` for the alert
+4. Check `justeightsuk@gmail.com` for the alert
 
 > Client ID / Secret stay in the Supabase dashboard only — never put them in Vite `.env`.
