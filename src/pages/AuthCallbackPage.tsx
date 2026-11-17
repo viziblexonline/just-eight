@@ -49,10 +49,24 @@ export function AuthCallbackPage() {
       }
 
       if (code) {
+        // Session may already exist if another tab/handler finished first
+        const { data: existing } = await supabase.auth.getSession()
+        if (existing.session) {
+          await notifyGoogleSession()
+          if (active) navigate('/account', { replace: true })
+          return
+        }
+
         const { error: exchangeError } =
           await supabase.auth.exchangeCodeForSession(code)
         if (!active) return
         if (exchangeError) {
+          const { data: after } = await supabase.auth.getSession()
+          if (after.session) {
+            await notifyGoogleSession()
+            navigate('/account', { replace: true })
+            return
+          }
           setError(exchangeError.message)
           return
         }

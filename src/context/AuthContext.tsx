@@ -6,7 +6,11 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { isSupabaseConfigured, supabase } from '../lib/supabase'
+import {
+  getOAuthRedirectTo,
+  isSupabaseConfigured,
+  supabase,
+} from '../lib/supabase'
 import {
   getLocalSession,
   localSignIn,
@@ -220,10 +224,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
 
+    const host = window.location.hostname
+    if (host === 'www.justeight.co.uk') {
+      window.location.replace(
+        `https://justeight.co.uk/login${window.location.search}`,
+      )
+      return { ok: true, message: 'Redirecting…' }
+    }
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: getOAuthRedirectTo(),
       },
     })
 
