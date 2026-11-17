@@ -1,11 +1,36 @@
-const ADMIN_NOTIFY_EMAIL = 'justeightuk@gmail.com'
+const STORE_EMAIL = 'justeightsuk@gmail.com'
+const STORE_FROM_NAME = 'Just Eight'
 
 type AuthNotifyEvent = 'signup' | 'login'
 
+function welcomeBody(fullName: string, site: string): string {
+  const hi = fullName.trim() || 'there'
+  return [
+    `Hi ${hi},`,
+    '',
+    'Welcome to Just Eight — thanks for joining us.',
+    '',
+    'Your account is ready. Browse Men, Women, and Kids and find pieces you love.',
+    site ? `Shop now: ${site}` : '',
+    '',
+    'If you did not create this account, you can ignore this email.',
+    '',
+    `— ${STORE_FROM_NAME}`,
+    STORE_EMAIL,
+  ]
+    .filter(Boolean)
+    .join('\n')
+}
+
 /**
  * Notifies the store inbox when a customer signs up or logs in.
- * Uses FormSubmit (no API key). The first request emails the inbox
- * a confirmation link — activate that once, then alerts arrive normally.
+ * On signup, also sends a welcome auto-response to the customer.
+ *
+ * Uses FormSubmit (no API key). First request to the store inbox needs
+ * one activation click in Gmail — after that, alerts arrive normally.
+ *
+ * For confirmation emails that show From: Just Eight <justeightsuk@gmail.com>,
+ * configure Supabase custom SMTP (see docs/EMAIL.md).
  */
 export async function notifyAdminAuthEvent(input: {
   event: AuthNotifyEvent
@@ -28,25 +53,36 @@ export async function notifyAdminAuthEvent(input: {
   const provider = input.provider || 'email'
   const who = input.fullName?.trim() || email
   const when = new Date().toISOString()
+  const site =
+    typeof window !== 'undefined' ? window.location.origin : 'https://justeight.co.uk'
+
+  const payload: Record<string, string> = {
+    _subject: `${STORE_FROM_NAME} — Customer ${action}`,
+    _template: 'table',
+    _replyto: email,
+    name: who,
+    email,
+    event: input.event,
+    customer_name: who,
+    customer_email: email,
+    provider,
+    time_utc: when,
+    site,
+    message: `${who} (${email}) just ${action} on ${STORE_FROM_NAME} via ${provider}.`,
+  }
+
+  if (input.event === 'signup') {
+    payload._autoresponse = welcomeBody(who, site)
+  }
 
   try {
-    await fetch(`https://formsubmit.co/ajax/${ADMIN_NOTIFY_EMAIL}`, {
+    await fetch(`https://formsubmit.co/ajax/${STORE_EMAIL}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },
-      body: JSON.stringify({
-        _subject: `JUST EIGHT — Customer ${action}`,
-        _template: 'table',
-        event: input.event,
-        customer_name: who,
-        customer_email: email,
-        provider,
-        time_utc: when,
-        site: typeof window !== 'undefined' ? window.location.origin : '',
-        message: `${who} (${email}) just ${action} on JUST EIGHT via ${provider}.`,
-      }),
+      body: JSON.stringify(payload),
     })
   } catch {
     // Never block auth UX if mail relay fails
