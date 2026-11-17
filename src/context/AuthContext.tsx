@@ -14,6 +14,7 @@ import {
   localSignUp,
 } from '../services/localAuth'
 import { fetchAdminProfile } from '../services/admin'
+import { notifyAdminAuthEvent } from '../lib/notifyAuth'
 import type { AuthResult, AuthUser } from '../types/auth'
 
 interface AuthContextValue {
@@ -144,6 +145,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           },
         })
         if (error) return { ok: false, message: error.message }
+        void notifyAdminAuthEvent({
+          event: 'signup',
+          email: input.email,
+          fullName: input.fullName,
+          provider: 'email',
+        })
         if (data.user && !data.session) {
           return {
             ok: true,
@@ -155,7 +162,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       const result = localSignUp(input)
-      if (result.user) setUser(result.user)
+      if (result.user) {
+        setUser(result.user)
+        void notifyAdminAuthEvent({
+          event: 'signup',
+          email: result.user.email,
+          fullName: result.user.fullName,
+          provider: 'email',
+        })
+      }
       return { ok: result.ok, message: result.message }
     },
     [],
@@ -164,16 +179,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signInWithEmail = useCallback(
     async (input: { email: string; password: string }) => {
       if (supabase) {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email: input.email.trim(),
           password: input.password,
         })
         if (error) return { ok: false, message: error.message }
+        void notifyAdminAuthEvent({
+          event: 'login',
+          email: data.user?.email || input.email,
+          fullName:
+            typeof data.user?.user_metadata?.full_name === 'string'
+              ? data.user.user_metadata.full_name
+              : undefined,
+          provider: 'email',
+        })
         return { ok: true, message: 'Signed in successfully.' }
       }
 
       const result = localSignIn(input)
-      if (result.user) setUser(result.user)
+      if (result.user) {
+        setUser(result.user)
+        void notifyAdminAuthEvent({
+          event: 'login',
+          email: result.user.email,
+          fullName: result.user.fullName,
+          provider: 'email',
+        })
+      }
       return { ok: result.ok, message: result.message }
     },
     [],

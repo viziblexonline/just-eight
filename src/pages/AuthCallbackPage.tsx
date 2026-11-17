@@ -1,7 +1,28 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { notifyAdminAuthEvent } from '../lib/notifyAuth'
 import { Button } from '../components/ui/Button'
+
+async function notifyGoogleSession() {
+  if (!supabase) return
+  const { data } = await supabase.auth.getUser()
+  const user = data.user
+  if (!user?.email) return
+  const meta = user.user_metadata ?? {}
+  const fullName =
+    (typeof meta.full_name === 'string' && meta.full_name) ||
+    (typeof meta.name === 'string' && meta.name) ||
+    undefined
+  const createdAt = user.created_at ? new Date(user.created_at).getTime() : 0
+  const isNew = createdAt > 0 && Date.now() - createdAt < 5 * 60 * 1000
+  void notifyAdminAuthEvent({
+    event: isNew ? 'signup' : 'login',
+    email: user.email,
+    fullName,
+    provider: 'google',
+  })
+}
 
 export function AuthCallbackPage() {
   const navigate = useNavigate()
@@ -35,6 +56,7 @@ export function AuthCallbackPage() {
           setError(exchangeError.message)
           return
         }
+        await notifyGoogleSession()
         navigate('/account', { replace: true })
         return
       }
@@ -48,6 +70,7 @@ export function AuthCallbackPage() {
       }
 
       if (data.session) {
+        await notifyGoogleSession()
         navigate('/account', { replace: true })
         return
       }
@@ -63,6 +86,7 @@ export function AuthCallbackPage() {
       }
 
       if (again.session) {
+        await notifyGoogleSession()
         navigate('/account', { replace: true })
         return
       }
