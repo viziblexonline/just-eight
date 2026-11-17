@@ -1,0 +1,17 @@
+---
+description: Auto commit and push website changes to GitHub for Vercel redeploy
+alwaysApply: true
+---
+
+# Auto commit + push after website changes
+
+Whenever the user asks for website/UI/storefront/product/page changes and you finish implementing them:
+
+1. **Always commit** the related files on the current working branch (do not wait for the user to ask).
+2. **Always push** to `origin` after a successful commit (`git push -u origin HEAD` if needed).
+3. Keep commits focused: exclude secrets (`.env`), and unrelated junk if clearly unrelated — but **do include** Supabase project files the user wants kept with the repo.
+4. Use a concise commit message that explains why the change was made.
+5. Do **not** update git config.
+6. After push, briefly tell the user that GitHub is updated and Vercel will auto-redeploy if the project is connected to this repo/branch.
+
+This overrides the default “only commit when asked” preference **for this project only**, because the user wants automatic GitHub sync and Vercel redeploys.
