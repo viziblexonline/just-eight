@@ -4,6 +4,7 @@ import type {
   Product,
   ProductCategory,
   ProductColor,
+  ProductGalleryImage,
   ProductSize,
 } from '../types'
 
@@ -26,10 +27,13 @@ export interface LocalProductInput {
   sizes: ProductSize[]
   colors: ProductColor[]
   imageUrls: string[]
+  gallery?: ProductGalleryImage[]
 }
 
 const PRODUCTS_KEY = 'just-eight-local-products'
 const CATEGORIES_KEY = 'just-eight-local-categories'
+const HIDDEN_PRODUCTS_KEY = 'just-eight-hidden-products'
+const HIDDEN_CATEGORIES_KEY = 'just-eight-hidden-categories'
 
 export interface LocalCategory {
   id: string
@@ -59,6 +63,16 @@ export function getLocalProductBySlug(slug: string): Product | undefined {
 }
 
 function fromInput(input: LocalProductInput, id: string, createdAt: string): Product {
+  const fallback =
+    'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=1200&q=80'
+  const gallery =
+    input.gallery && input.gallery.length > 0
+      ? input.gallery
+      : (input.imageUrls.length > 0 ? input.imageUrls : [fallback]).map(
+          (url) => ({ url, colorName: null as string | null }),
+        )
+  const images = gallery.map((img) => img.url)
+
   return {
     id,
     slug: input.slug,
@@ -70,12 +84,8 @@ function fromInput(input: LocalProductInput, id: string, createdAt: string): Pro
     salePrice: input.salePrice ?? undefined,
     category: input.categoryId as ProductCategory,
     audience: input.audience ?? 'men',
-    images:
-      input.imageUrls.length > 0
-        ? input.imageUrls
-        : [
-            'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=1200&q=80',
-          ],
+    images,
+    gallery,
     sizes: input.sizes,
     colors: input.colors,
     stock: input.stock,
@@ -111,8 +121,44 @@ export function updateLocalProduct(productId: string, input: LocalProductInput) 
   saveLocalProducts(products)
 }
 
+/** Upsert a local override for a default/demo product while keeping its id. */
+export function upsertLocalProduct(
+  productId: string,
+  input: LocalProductInput,
+  createdAt = new Date().toISOString().slice(0, 10),
+) {
+  const products = getLocalProducts().filter(
+    (p) => p.id !== productId && p.slug !== input.slug,
+  )
+  saveLocalProducts([fromInput(input, productId, createdAt), ...products])
+}
+
 export function deleteLocalProduct(productId: string) {
   saveLocalProducts(getLocalProducts().filter((p) => p.id !== productId))
+}
+
+export function listHiddenProductIds(): string[] {
+  return readStorage<string[]>(HIDDEN_PRODUCTS_KEY, [])
+}
+
+export function hideLocalProduct(productId: string) {
+  const hidden = listHiddenProductIds()
+  if (!hidden.includes(productId)) {
+    writeStorage(HIDDEN_PRODUCTS_KEY, [...hidden, productId])
+  }
+  deleteLocalProduct(productId)
+}
+
+export function listHiddenCategoryIds(): string[] {
+  return readStorage<string[]>(HIDDEN_CATEGORIES_KEY, [])
+}
+
+export function hideLocalCategory(id: string) {
+  const hidden = listHiddenCategoryIds()
+  if (!hidden.includes(id)) {
+    writeStorage(HIDDEN_CATEGORIES_KEY, [...hidden, id])
+  }
+  deleteLocalCategory(id)
 }
 
 export function listLocalCategories(): LocalCategory[] {
@@ -138,6 +184,36 @@ export function createLocalCategory(input: {
       image: input.imageUrl,
     },
   ])
+}
+
+export function updateLocalCategory(input: {
+  id: string
+  name: string
+  description: string
+  imageUrl: string
+}) {
+  const categories = listLocalCategories()
+  const index = categories.findIndex((c) => c.id === input.id)
+  const next = {
+    id: input.id,
+    name: input.name,
+    description: input.description,
+    image: input.imageUrl,
+  }
+  if (index >= 0) {
+    categories[index] = next
+    writeStorage(CATEGORIES_KEY, categories)
+    return
+  }
+  // Seed/default category override (not yet in local storage)
+  writeStorage(CATEGORIES_KEY, [...categories, next])
+}
+
+export function deleteLocalCategory(id: string) {
+  writeStorage(
+    CATEGORIES_KEY,
+    listLocalCategories().filter((c) => c.id !== id),
+  )
 }
 
 export function fileToDataUrl(file: File): Promise<string> {

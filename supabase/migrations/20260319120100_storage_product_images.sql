@@ -6,7 +6,7 @@ values (
   'product-images',
   'product-images',
   true,
-  5242880,
+  20971520,
   array['image/jpeg', 'image/png', 'image/webp', 'image/gif']
 )
 on conflict (id) do update

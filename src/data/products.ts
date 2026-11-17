@@ -19,7 +19,7 @@ export const products: Product[] = [
       'JUST EIGHT woven label',
     ],
     care: ['Machine wash cold', 'Do not bleach', 'Tumble dry low', 'Iron on low'],
-    price: 48,
+    price: 8,
     category: 't-shirts',
     audience: 'men',
     images: [
@@ -53,8 +53,7 @@ export const products: Product[] = [
       'Ribbed cuffs and hem',
     ],
     care: ['Machine wash cold', 'Wash inside out', 'Do not tumble dry', 'Reshape while damp'],
-    price: 118,
-    salePrice: 98,
+    price: 8,
     category: 'hoodies',
     audience: 'men',
     images: [
@@ -87,7 +86,7 @@ export const products: Product[] = [
       'Internal pocket',
     ],
     care: ['Wipe clean', 'Do not dry clean', 'Hang to dry'],
-    price: 186,
+    price: 8,
     category: 'jackets',
     audience: 'men',
     images: [
@@ -119,7 +118,7 @@ export const products: Product[] = [
       'Sold as a complete set',
     ],
     care: ['Machine wash cold', 'Do not bleach', 'Hang dry preferred'],
-    price: 164,
+    price: 8,
     category: 'tracksuits',
     audience: 'women',
     images: [
@@ -150,8 +149,7 @@ export const products: Product[] = [
       'Moisture-wicking finish',
     ],
     care: ['Machine wash cold', 'Do not use fabric softener', 'Hang dry'],
-    price: 92,
-    salePrice: 78,
+    price: 8,
     category: 'sportswear',
     audience: 'women',
     images: [
@@ -182,7 +180,7 @@ export const products: Product[] = [
       'Unisex fit',
     ],
     care: ['Hand wash cold', 'Lay flat to dry'],
-    price: 36,
+    price: 8,
     category: 'gloves',
     audience: 'men',
     images: [
@@ -213,7 +211,7 @@ export const products: Product[] = [
       'Soft washed finish',
     ],
     care: ['Machine wash cold', 'Tumble dry low', 'Do not iron print'],
-    price: 54,
+    price: 8,
     category: 't-shirts',
     audience: 'women',
     images: [
@@ -243,7 +241,7 @@ export const products: Product[] = [
       'Metal zipper hardware',
     ],
     care: ['Machine wash cold', 'Wash inside out', 'Do not bleach'],
-    price: 128,
+    price: 8,
     category: 'hoodies',
     audience: 'men',
     images: [
@@ -274,8 +272,7 @@ export const products: Product[] = [
       'Internal locker loop',
     ],
     care: ['Machine wash cold', 'Hang dry', 'Cool iron if needed'],
-    price: 142,
-    salePrice: 120,
+    price: 8,
     category: 'jackets',
     audience: 'women',
     images: [
@@ -306,7 +303,7 @@ export const products: Product[] = [
       'Secure side pocket',
     ],
     care: ['Machine wash cold', 'Do not bleach', 'Hang dry'],
-    price: 88,
+    price: 8,
     category: 'sportswear',
     audience: 'men',
     images: [
@@ -337,7 +334,7 @@ export const products: Product[] = [
       'Structured crown',
     ],
     care: ['Spot clean only', 'Do not machine wash'],
-    price: 42,
+    price: 8,
     category: 'accessories',
     audience: 'women',
     images: [
@@ -368,7 +365,7 @@ export const products: Product[] = [
       'Double-needle hem',
     ],
     care: ['Machine wash cold', 'Tumble dry low', 'Iron medium'],
-    price: 62,
+    price: 8,
     category: 't-shirts',
     audience: 'women',
     images: [
@@ -399,7 +396,7 @@ export const products: Product[] = [
       'JUST EIGHT woven label',
     ],
     care: ['Machine wash cold', 'Tumble dry low', 'Do not bleach'],
-    price: 28,
+    price: 8,
     category: 't-shirts',
     audience: 'kids',
     images: [
@@ -432,8 +429,7 @@ export const products: Product[] = [
       'Kids sizing',
     ],
     care: ['Machine wash cold', 'Wash inside out', 'Hang dry'],
-    price: 58,
-    salePrice: 48,
+    price: 8,
     category: 'hoodies',
     audience: 'kids',
     images: [
@@ -464,7 +460,7 @@ export const products: Product[] = [
       'Sold as a complete set',
     ],
     care: ['Machine wash cold', 'Do not bleach', 'Hang dry'],
-    price: 74,
+    price: 8,
     category: 'tracksuits',
     audience: 'kids',
     images: [
@@ -495,7 +491,7 @@ export const products: Product[] = [
       'Kids fit',
     ],
     care: ['Wipe clean', 'Hang to dry', 'Do not dry clean'],
-    price: 86,
+    price: 8,
     category: 'jackets',
     audience: 'kids',
     images: [

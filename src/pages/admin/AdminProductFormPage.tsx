@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
   createProduct,
@@ -8,16 +8,22 @@ import {
   type AdminProductInput,
 } from '../../services/admin'
 import { useCatalog } from '../../context/CatalogContext'
-import type { ProductColor, ProductSize, Audience } from '../../types'
+import { getProductGallery } from '../../lib/products'
+import type {
+  ProductColor,
+  ProductGalleryImage,
+  ProductSize,
+  Audience,
+} from '../../types'
+import { PRODUCT_COLORS } from '../../data/colors'
+import { mapUploadsSequentially } from '../../lib/imageUpload'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
 
 const SIZE_OPTIONS: ProductSize[] = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'One Size']
-const DEFAULT_COLORS: ProductColor[] = [
-  { name: 'Black', hex: '#0a0a0a' },
-  { name: 'White', hex: '#ffffff' },
-  { name: 'Grey', hex: '#8a8a8a' },
-]
+const DEFAULT_COLORS = PRODUCT_COLORS
+
+const SHARED_KEY = '__shared__'
 
 function slugify(value: string) {
   return value
@@ -25,6 +31,15 @@ function slugify(value: string) {
     .trim()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '')
+}
+
+type GalleryBucket = {
+  urls: string[]
+  paths: (string | null)[]
+}
+
+function emptyBucket(): GalleryBucket {
+  return { urls: [], paths: [] }
 }
 
 export function AdminProductFormPage() {
@@ -38,23 +53,25 @@ export function AdminProductFormPage() {
   const [description, setDescription] = useState('')
   const [details, setDetails] = useState('')
   const [care, setCare] = useState('')
-  const [price, setPrice] = useState('0')
+  const [price, setPrice] = useState('8')
   const [salePrice, setSalePrice] = useState('')
   const [categoryId, setCategoryId] = useState('t-shirts')
   const [audience, setAudience] = useState<Audience>('men')
   const [stock, setStock] = useState('0')
   const [popularity, setPopularity] = useState('50')
-  const [featured, setFeatured] = useState(false)
-  const [newArrival, setNewArrival] = useState(false)
+  const [featured, setFeatured] = useState(!isEdit)
+  const [newArrival, setNewArrival] = useState(!isEdit)
   const [bestSeller, setBestSeller] = useState(false)
   const [isActive, setIsActive] = useState(true)
   const [sizes, setSizes] = useState<ProductSize[]>(['S', 'M', 'L'])
   const [colors, setColors] = useState<ProductColor[]>([DEFAULT_COLORS[0]])
-  const [imageUrls, setImageUrls] = useState<string[]>([])
-  const [imagePaths, setImagePaths] = useState<(string | null)[]>([])
+  const [galleryByColor, setGalleryByColor] = useState<
+    Record<string, GalleryBucket>
+  >({ [SHARED_KEY]: emptyBucket() })
   const [loading, setLoading] = useState(isEdit)
   const [saving, setSaving] = useState(false)
-  const [uploading, setUploading] = useState(false)
+  const [uploadingKey, setUploadingKey] = useState<string | null>(null)
+  const [uploadProgress, setUploadProgress] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -86,8 +103,20 @@ export function AdminProductFormPage() {
         setIsActive(true)
         setSizes(product.sizes)
         setColors(product.colors)
-        setImageUrls(product.images)
-        setImagePaths(product.images.map(() => null))
+
+        const next: Record<string, GalleryBucket> = {
+          [SHARED_KEY]: emptyBucket(),
+        }
+        for (const color of product.colors) {
+          next[color.name] = emptyBucket()
+        }
+        for (const img of getProductGallery(product)) {
+          const key = img.colorName || SHARED_KEY
+          if (!next[key]) next[key] = emptyBucket()
+          next[key].urls.push(img.url)
+          next[key].paths.push(img.storagePath ?? null)
+        }
+        setGalleryByColor(next)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load product')
       } finally {
@@ -96,6 +125,11 @@ export function AdminProductFormPage() {
     }
     void load()
   }, [isEdit, productId])
+
+  const colorKeys = useMemo(
+    () => [SHARED_KEY, ...colors.map((c) => c.name)],
+    [colors],
+  )
 
   function toggleSize(size: ProductSize) {
     setSizes((prev) =>
@@ -106,30 +140,82 @@ export function AdminProductFormPage() {
   function toggleColor(color: ProductColor) {
     setColors((prev) => {
       const exists = prev.some((c) => c.name === color.name)
-      return exists
-        ? prev.filter((c) => c.name !== color.name)
-        : [...prev, color]
+      if (exists) {
+        setGalleryByColor((gallery) => {
+          const next = { ...gallery }
+          delete next[color.name]
+          return next
+        })
+        return prev.filter((c) => c.name !== color.name)
+      }
+      setGalleryByColor((gallery) => ({
+        ...gallery,
+        [color.name]: gallery[color.name] ?? emptyBucket(),
+      }))
+      return [...prev, color]
     })
   }
 
-  async function handleUpload(fileList: FileList | null) {
+  async function handleUpload(colorKey: string, fileList: FileList | null) {
     if (!fileList?.length) return
-    setUploading(true)
+    setUploadingKey(colorKey)
+    setUploadProgress(`0 / ${fileList.length}`)
     setError(null)
     try {
-      const uploaded = await Promise.all(
-        [...fileList].map((file) => uploadProductImage(file)),
+      const uploaded = await mapUploadsSequentially(
+        [...fileList],
+        (file) => uploadProductImage(file),
+        (done, total) => setUploadProgress(`${done} / ${total}`),
       )
-      setImageUrls((prev) => [...prev, ...uploaded.map((u) => u.url)])
-      setImagePaths((prev) => [...prev, ...uploaded.map((u) => u.path)])
+      setGalleryByColor((prev) => {
+        const current = prev[colorKey] ?? emptyBucket()
+        return {
+          ...prev,
+          [colorKey]: {
+            urls: [...current.urls, ...uploaded.map((u) => u.url)],
+            paths: [...current.paths, ...uploaded.map((u) => u.path)],
+          },
+        }
+      })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed')
     } finally {
-      setUploading(false)
+      setUploadingKey(null)
+      setUploadProgress(null)
     }
   }
 
+  function removeImage(colorKey: string, index: number) {
+    setGalleryByColor((prev) => {
+      const current = prev[colorKey] ?? emptyBucket()
+      return {
+        ...prev,
+        [colorKey]: {
+          urls: current.urls.filter((_, i) => i !== index),
+          paths: current.paths.filter((_, i) => i !== index),
+        },
+      }
+    })
+  }
+
+  function buildGallery(): ProductGalleryImage[] {
+    const gallery: ProductGalleryImage[] = []
+    for (const key of colorKeys) {
+      const bucket = galleryByColor[key]
+      if (!bucket?.urls.length) continue
+      bucket.urls.forEach((url, index) => {
+        gallery.push({
+          url,
+          colorName: key === SHARED_KEY ? null : key,
+          storagePath: bucket.paths[index] ?? null,
+        })
+      })
+    }
+    return gallery
+  }
+
   function buildInput(): AdminProductInput {
+    const gallery = buildGallery()
     return {
       name: name.trim(),
       slug: slugify(slug || name),
@@ -154,8 +240,9 @@ export function AdminProductFormPage() {
       isActive,
       sizes,
       colors,
-      imageUrls,
-      imagePaths,
+      gallery,
+      imageUrls: gallery.map((g) => g.url),
+      imagePaths: gallery.map((g) => g.storagePath ?? null),
     }
   }
 
@@ -169,6 +256,21 @@ export function AdminProductFormPage() {
     }
     if (!input.sizes.length || !input.colors.length) {
       setError('Select at least one size and color.')
+      return
+    }
+    if (!input.gallery.length) {
+      setError('Upload at least one product image.')
+      return
+    }
+    const missingColor = input.colors.find(
+      (color) =>
+        !input.gallery.some((img) => img.colorName === color.name) &&
+        !input.gallery.some((img) => img.colorName === null),
+    )
+    if (missingColor) {
+      setError(
+        `Add photos for “${missingColor.name}” (or upload shared photos for all colors).`,
+      )
       return
     }
 
@@ -346,24 +448,40 @@ export function AdminProductFormPage() {
           <legend className="text-xs uppercase tracking-[0.14em] text-mute">
             Colors
           </legend>
-          <div className="mt-3 flex flex-wrap gap-2">
+          <p className="mt-2 text-sm text-mute">
+            Pick every shade this product comes in — swatches help you match
+            photos to the right color.
+          </p>
+          <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
             {DEFAULT_COLORS.map((color) => {
               const active = colors.some((c) => c.name === color.name)
               return (
                 <button
                   key={color.name}
                   type="button"
+                  title={color.name}
                   onClick={() => toggleColor(color)}
                   className={[
-                    'border px-3 py-2 text-xs uppercase',
-                    active ? 'border-ink bg-ink text-snow' : 'border-line',
+                    'flex items-center gap-2 border px-2.5 py-2 text-left text-xs transition-colors',
+                    active
+                      ? 'border-accent bg-accent-soft text-ink'
+                      : 'border-line hover:border-ink',
                   ].join(' ')}
                 >
-                  {color.name}
+                  <span
+                    className="h-6 w-6 shrink-0 rounded-full border border-line shadow-sm"
+                    style={{ backgroundColor: color.hex }}
+                  />
+                  <span className="truncate">{color.name}</span>
                 </button>
               )
             })}
           </div>
+          {colors.length > 0 ? (
+            <p className="mt-3 text-xs text-mute">
+              Selected: {colors.map((c) => c.name).join(', ')}
+            </p>
+          ) : null}
         </fieldset>
 
         <div className="flex flex-wrap gap-4 text-sm">
@@ -401,35 +519,85 @@ export function AdminProductFormPage() {
           </label>
         </div>
 
-        <div>
-          <p className="text-xs uppercase tracking-[0.14em] text-mute">Images</p>
-          <input
-            type="file"
-            accept="image/jpeg,image/png,image/webp,image/gif"
-            multiple
-            className="mt-3 block w-full text-sm"
-            onChange={(e) => void handleUpload(e.target.files)}
-          />
-          {uploading ? (
-            <p className="mt-2 text-xs text-mute">Uploading…</p>
-          ) : null}
-          <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
-            {imageUrls.map((url, index) => (
-              <div key={`${url}-${index}`} className="relative aspect-[3/4] bg-mist">
-                <img src={url} alt="" className="h-full w-full object-cover" />
-                <button
-                  type="button"
-                  className="absolute right-1 top-1 bg-ink px-2 py-1 text-[10px] text-snow"
-                  onClick={() => {
-                    setImageUrls((prev) => prev.filter((_, i) => i !== index))
-                    setImagePaths((prev) => prev.filter((_, i) => i !== index))
-                  }}
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
+        <div className="space-y-6 border border-line bg-paper/60 p-4">
+          <div>
+            <p className="text-xs uppercase tracking-[0.14em] text-mute">
+              Images by color
+            </p>
+            <p className="mt-2 text-sm text-mute">
+              Upload photos for each color. When a shopper picks that color, those
+              photos show. Shared photos are used if a color has none.
+            </p>
           </div>
+
+          {colorKeys.map((key) => {
+            const label =
+              key === SHARED_KEY ? 'Shared (all colors)' : key
+            const bucket = galleryByColor[key] ?? emptyBucket()
+            const uploading = uploadingKey === key
+            return (
+              <div key={key} className="border border-line bg-snow p-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    {key !== SHARED_KEY ? (
+                      <span
+                        className="h-5 w-5 rounded-full border border-line"
+                        style={{
+                          backgroundColor:
+                            colors.find((c) => c.name === key)?.hex ?? '#ccc',
+                        }}
+                      />
+                    ) : null}
+                    <p className="text-sm font-medium">{label}</p>
+                  </div>
+                  <label className="cursor-pointer text-xs uppercase tracking-[0.14em] underline">
+                    {uploading
+                      ? `Uploading ${uploadProgress ?? ''}…`
+                      : 'Upload from PC'}
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      multiple
+                      className="sr-only"
+                      disabled={Boolean(uploadingKey) || saving}
+                      onChange={(e) => {
+                        void handleUpload(key, e.target.files)
+                        e.target.value = ''
+                      }}
+                    />
+                  </label>
+                </div>
+                <p className="mt-2 text-[11px] text-mute">
+                  Large phone photos are compressed automatically before upload.
+                </p>
+                {bucket.urls.length === 0 ? (
+                  <p className="mt-3 text-xs text-mute">No photos yet.</p>
+                ) : (
+                  <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
+                    {bucket.urls.map((url, index) => (
+                      <div
+                        key={`${key}-${url}-${index}`}
+                        className="relative aspect-[3/4] bg-mist"
+                      >
+                        <img
+                          src={url}
+                          alt=""
+                          className="h-full w-full object-cover"
+                        />
+                        <button
+                          type="button"
+                          className="absolute right-1 top-1 bg-ink px-2 py-1 text-[10px] text-snow"
+                          onClick={() => removeImage(key, index)}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </div>
 
         {error ? (
@@ -438,7 +606,7 @@ export function AdminProductFormPage() {
           </p>
         ) : null}
 
-        <Button type="submit" size="lg" disabled={saving || uploading}>
+        <Button type="submit" size="lg" disabled={saving || Boolean(uploadingKey)}>
           {saving ? 'Saving…' : isEdit ? 'Update product' : 'Create product'}
         </Button>
       </form>

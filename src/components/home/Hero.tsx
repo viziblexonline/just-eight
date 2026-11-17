@@ -1,32 +1,73 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useCatalog } from '../../context/CatalogContext'
-import { Button } from '../ui/Button'
 
-const FALLBACK_IMAGE =
-  'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1200&q=80'
-const SLIDE_MS = 4500
+const FALLBACK = [
+  {
+    id: 'f1',
+    image:
+      'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1800&q=80',
+    eyebrow: 'New season',
+    title: 'EVERYDAY ELEVATED',
+    cta: { to: '/shop', label: 'Shop now' },
+  },
+  {
+    id: 'f2',
+    image:
+      'https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=1800&q=80',
+    eyebrow: 'Men',
+    title: 'THE MENSWEAR EDIT',
+    cta: { to: '/shop?audience=men', label: 'Shop men' },
+  },
+  {
+    id: 'f3',
+    image:
+      'https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=1800&q=80',
+    eyebrow: 'Women',
+    title: 'THE WOMENSWEAR EDIT',
+    cta: { to: '/shop?audience=women', label: 'Shop women' },
+  },
+]
+
+const SLIDE_MS = 5500
+const SWIPE = 48
 
 export function Hero() {
-  const { products, loading } = useCatalog()
+  const { products } = useCatalog()
   const [active, setActive] = useState(0)
+  const [paused, setPaused] = useState(false)
+  const startX = useRef<number | null>(null)
+  const drag = useRef(0)
 
   const slides = useMemo(() => {
-    const ordered = [
-      ...products.filter((product) => product.featured && product.images[0]),
-      ...products.filter((product) => !product.featured && product.images[0]),
-    ]
-
-    const unique = ordered.filter(
-      (product, index, list) =>
-        list.findIndex((entry) => entry.id === product.id) === index,
-    )
-
-    return unique.slice(0, 8).map((product) => ({
-      id: product.id,
-      name: product.name,
-      image: product.images[0],
-    }))
+    const imgs = products
+      .filter((p) => p.images[0])
+      .sort((a, b) => Number(b.featured) - Number(a.featured))
+      .slice(0, 4)
+      .map((p, i) => ({
+        id: p.id,
+        image: p.images[0],
+        eyebrow: i === 0 ? 'JUST EIGHT' : p.audience.toUpperCase(),
+        title:
+          i === 0
+            ? 'EVERYDAY ELEVATED'
+            : i === 1
+              ? 'NEW ARRIVALS'
+              : i === 2
+                ? 'BEST SELLERS'
+                : 'THE COLLECTION',
+        cta: {
+          to:
+            i === 1
+              ? '/shop?sort=newest'
+              : i === 2
+                ? '/shop?sort=popularity'
+                : '/shop',
+          label: 'Shop now',
+        },
+      }))
+    return imgs.length >= 2 ? imgs : FALLBACK
   }, [products])
 
   useEffect(() => {
@@ -34,118 +75,126 @@ export function Hero() {
   }, [slides.length])
 
   useEffect(() => {
-    if (slides.length <= 1) return
-    const timer = window.setInterval(() => {
-      setActive((index) => (index + 1) % slides.length)
-    }, SLIDE_MS)
-    return () => window.clearInterval(timer)
-  }, [slides.length])
+    if (slides.length <= 1 || paused) return
+    const t = window.setInterval(
+      () => setActive((i) => (i + 1) % slides.length),
+      SLIDE_MS,
+    )
+    return () => window.clearInterval(t)
+  }, [slides.length, paused, active])
 
-  const current = slides[active]
-  const displaySlides =
-    slides.length > 0
-      ? slides
-      : [{ id: 'fallback', name: 'JUST EIGHT', image: FALLBACK_IMAGE }]
+  function go(d: number) {
+    setActive((i) => (i + d + slides.length) % slides.length)
+  }
+
+  const current = slides[active] ?? slides[0]
 
   return (
-    <section className="relative min-h-[92vh] overflow-hidden bg-navy-deep text-snow">
-      <div className="absolute inset-0">
-        {displaySlides.map((slide, index) => {
-          const isActive = index === active || (slides.length === 0 && index === 0)
-          return (
-            <div
-              key={slide.id}
-              className={[
-                'absolute inset-0 transition-opacity duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]',
-                isActive ? 'opacity-100' : 'opacity-0',
-              ].join(' ')}
-              aria-hidden={!isActive}
-            >
-              {/* Sharp edge fill — no blur veil */}
-              <img
-                src={slide.image}
-                alt=""
-                className="absolute inset-0 h-full w-full scale-105 object-cover object-center opacity-40"
-                loading={index === 0 ? 'eager' : 'lazy'}
-              />
-              {/* Clear main product */}
-              <img
-                src={slide.image}
-                alt=""
-                className="absolute inset-0 h-full w-full object-contain object-center"
-                loading={index === 0 ? 'eager' : 'lazy'}
-              />
-            </div>
-          )
-        })}
-      </div>
+    <section
+      className="relative h-[min(88vh,820px)] min-h-[480px] overflow-hidden bg-mist select-none"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onTouchStart={(e) => {
+        startX.current = e.touches[0].clientX
+        drag.current = 0
+        setPaused(true)
+      }}
+      onTouchMove={(e) => {
+        if (startX.current === null) return
+        drag.current = e.touches[0].clientX - startX.current
+      }}
+      onTouchEnd={() => {
+        if (drag.current > SWIPE) go(-1)
+        else if (drag.current < -SWIPE) go(1)
+        startX.current = null
+        setPaused(false)
+      }}
+      aria-roledescription="carousel"
+      aria-label="Campaign banner"
+    >
+      {slides.map((slide, index) => (
+        <div
+          key={slide.id}
+          className={[
+            'absolute inset-0 transition-opacity duration-700',
+            index === active ? 'opacity-100' : 'opacity-0',
+          ].join(' ')}
+          aria-hidden={index !== active}
+        >
+          <img
+            src={slide.image}
+            alt=""
+            className={[
+              'h-full w-full object-cover object-center',
+              index === active ? 'animate-ken' : '',
+            ].join(' ')}
+            draggable={false}
+            loading={index === 0 ? 'eager' : 'lazy'}
+          />
+        </div>
+      ))}
 
-      {/* Bottom fade only — keeps text readable without covering the slide */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-navy-deep/85 via-navy-deep/35 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/15 to-transparent" />
 
-      <div className="container-je relative flex min-h-[92vh] flex-col justify-end pb-16 pt-28 md:pb-24">
-        <div className="max-w-xl">
-          <p className="animate-fade-up text-[11px] uppercase tracking-[0.32em] text-accent">
-            JUST EIGHT · Luxury ready-to-wear
-          </p>
-          <h1 className="animate-fade-up mt-5 font-display text-5xl font-semibold leading-[1.05] tracking-[0.04em] md:text-7xl lg:text-8xl">
-            Elevate your
-            <span className="gold-text"> everyday.</span>
-          </h1>
+      <div className="container-je relative flex h-full flex-col justify-end pb-14 pt-24 md:justify-center md:pb-20">
+        <div className="max-w-xl text-snow">
           <p
-            className="animate-fade-up mt-6 text-base leading-relaxed text-white/85 md:max-w-lg md:text-lg"
-            style={{ animationDelay: '100ms' }}
+            key={`e-${current.id}`}
+            className="animate-fade-up text-[11px] font-medium uppercase tracking-[0.28em]"
           >
-            Tees, hoodies, outerwear, and sportswear — cut with clarity, quality,
-            and quiet confidence.
+            {current.eyebrow}
           </p>
-          <div
-            className="animate-fade-up mt-10 flex flex-wrap gap-3"
-            style={{ animationDelay: '180ms' }}
+          <h1
+            key={`t-${current.id}`}
+            className="animate-fade-up mt-3 text-4xl font-medium tracking-[0.04em] md:text-6xl lg:text-7xl"
+            style={{ animationDelay: '60ms' }}
           >
-            <Link
-              to="/shop"
-              className="interactive inline-flex items-center justify-center bg-accent px-8 py-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-ink hover:bg-gold-bright"
-            >
-              Shop Now
-            </Link>
-            <Link to="/shop?sort=newest">
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-accent/50 text-snow hover:border-accent hover:bg-accent hover:text-ink"
-              >
-                Explore Collection
-              </Button>
-            </Link>
-          </div>
+            {current.title}
+          </h1>
+          <Link
+            key={`c-${current.id}`}
+            to={current.cta.to}
+            className="animate-fade-up mt-8 inline-flex items-center justify-center bg-accent px-8 py-3.5 text-[11px] font-medium uppercase tracking-[0.18em] text-ink transition-colors hover:bg-gold-bright"
+            style={{ animationDelay: '120ms' }}
+          >
+            {current.cta.label}
+          </Link>
         </div>
 
-        {!loading && slides.length > 1 ? (
-          <div className="mt-10 flex flex-wrap items-center gap-5 md:mt-12">
-            {current ? (
-              <p className="text-[10px] uppercase tracking-[0.22em] text-white/70">
-                Now showing · {current.name}
-              </p>
-            ) : null}
-            <div className="flex gap-2" role="tablist" aria-label="Product slideshow">
-              {slides.map((slide, index) => (
-                <button
-                  key={slide.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={index === active}
-                  aria-label={`Show ${slide.name}`}
-                  className={[
-                    'h-1.5 transition-all duration-500',
-                    index === active ? 'w-12 bg-accent' : 'w-4 bg-white/40 hover:bg-accent/70',
-                  ].join(' ')}
-                  onClick={() => setActive(index)}
-                />
-              ))}
-            </div>
+        <div className="mt-10 flex items-center justify-between">
+          <div className="flex gap-2">
+            <button
+              type="button"
+              aria-label="Previous"
+              className="grid h-10 w-10 place-items-center border border-white/40 text-snow hover:bg-snow hover:text-ink"
+              onClick={() => go(-1)}
+            >
+              <ChevronLeft size={18} strokeWidth={1.5} />
+            </button>
+            <button
+              type="button"
+              aria-label="Next"
+              className="grid h-10 w-10 place-items-center border border-white/40 text-snow hover:bg-snow hover:text-ink"
+              onClick={() => go(1)}
+            >
+              <ChevronRight size={18} strokeWidth={1.5} />
+            </button>
           </div>
-        ) : null}
+          <div className="flex gap-2">
+            {slides.map((s, i) => (
+              <button
+                key={s.id}
+                type="button"
+                aria-label={`Slide ${i + 1}`}
+                className={[
+                  'h-0.5 transition-all duration-500',
+                  i === active ? 'w-10 bg-accent' : 'w-4 bg-white/40',
+                ].join(' ')}
+                onClick={() => setActive(i)}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   )

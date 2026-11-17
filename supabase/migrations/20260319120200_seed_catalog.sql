@@ -33,7 +33,7 @@ begin
     'A clean crewneck tee in heavyweight cotton. Soft hand-feel, structured drape, and a silhouette made for everyday wear.',
     '["240gsm cotton jersey","Relaxed fit with set-in sleeves","Ribbed crew neckline","JUST EIGHT woven label"]'::jsonb,
     '["Machine wash cold","Do not bleach","Tumble dry low","Iron on low"]'::jsonb,
-    48, null, 't-shirts', 42, true, true, false, 92, true
+    8, null, 't-shirts', 42, true, true, false, 92, true
   ) returning id into pid;
 
   insert into public.product_images (product_id, url, sort_order, alt) values
@@ -55,7 +55,7 @@ begin
     'A refined fleece hoodie with a quiet presence. Brushed interior, clean seams, and a fit that layers without bulk.',
     '["French terry fleece","Kangaroo pocket","Adjustable drawcord hood","Ribbed cuffs and hem"]'::jsonb,
     '["Machine wash cold","Wash inside out","Do not tumble dry","Reshape while damp"]'::jsonb,
-    118, 98, 'hoodies', 28, true, false, true, 98, true
+    8, null, 'hoodies', 28, true, false, true, 98, true
   ) returning id into pid;
 
   insert into public.product_images (product_id, url, sort_order, alt) values
@@ -75,7 +75,7 @@ begin
     'A lightweight outer layer for transitional weather. Matte finish, minimal hardware, and a tailored but easy cut.',
     '["Water-resistant shell","Two-way front zip","Storm flap collar","Internal pocket"]'::jsonb,
     '["Wipe clean","Do not dry clean","Hang to dry"]'::jsonb,
-    186, null, 'jackets', 16, true, true, false, 88, true
+    8, null, 'jackets', 16, true, true, false, 88, true
   ) returning id into pid;
 
   insert into public.product_images (product_id, url, sort_order, alt) values

@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
 @theme {
-  --font-display: "Cinzel", serif;
-  --font-sans: "Manrope", sans-serif;
+  --font-display: "Outfit", sans-serif;
+  --font-sans: "Outfit", sans-serif;
 
-  /* Logo-derived: deep navy + polished gold */
+  /* Logo palette: deep navy + metallic gold */
   --color-ink: #0b1c36;
   --color-ink-soft: #143055;
   --color-mute: #6a768c;
   --color-line: #d7dde8;
-  --color-mist: #e8edf5;
-  --color-paper: #f0f3f8;
-  --color-snow: #f8f9fc;
+  --color-mist: #eef1f6;
+  --color-paper: #f4f6fa;
+  --color-snow: #ffffff;
   --color-accent: #c9a84c;
   --color-accent-soft: #f3e7c4;
   --color-navy: #0b1c36;
@@ -41,9 +41,8 @@
     color: var(--color-ink);
     background-color: var(--color-snow);
     background-image:
-      radial-gradient(ellipse 100% 70% at 0% 0%, rgb(201 168 76 / 0.12), transparent 45%),
-      radial-gradient(ellipse 80% 50% at 100% 0%, rgb(20 48 85 / 0.08), transparent 50%),
-      linear-gradient(180deg, #f8f9fc 0%, #f0f3f8 55%, #e8edf5 100%);
+      radial-gradient(ellipse 90% 55% at 0% -10%, rgb(201 168 76 / 0.08), transparent 50%),
+      radial-gradient(ellipse 70% 45% at 100% 0%, rgb(11 28 54 / 0.05), transparent 48%);
     background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -66,7 +65,7 @@
   }
 
   ::selection {
-    background: var(--color-ink);
+    background: var(--color-navy);
     color: var(--color-accent);
   }
 }
@@ -74,16 +73,23 @@
 @layer utilities {
   .font-display {
     font-family: var(--font-display);
+    letter-spacing: 0.02em;
   }
 
   .container-je {
     width: 100%;
-    max-width: 86rem;
+    max-width: 88rem;
     margin-inline: auto;
-    padding-inline: 1.25rem;
+    padding-inline: 1rem;
   }
 
   @media (min-width: 768px) {
+    .container-je {
+      padding-inline: 2rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
     .container-je {
       padding-inline: 2.5rem;
     }
@@ -93,34 +99,25 @@
     text-wrap: balance;
   }
 
-  .surface-panel {
-    background: rgb(248 249 252 / 0.88);
-    border: 1px solid var(--color-line);
-    backdrop-filter: blur(12px);
-  }
-
   .gold-rule {
     height: 2px;
-    width: 3rem;
+    width: 2.5rem;
     background: linear-gradient(90deg, var(--color-gold), var(--color-gold-bright));
   }
 
   .gold-text {
-    background: linear-gradient(120deg, #a8872f 0%, #e0c36a 45%, #c9a84c 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--color-accent);
   }
 
   .navy-panel {
     background:
-      radial-gradient(ellipse 80% 60% at 20% 0%, rgb(201 168 76 / 0.16), transparent 50%),
+      radial-gradient(ellipse 80% 60% at 20% 0%, rgb(201 168 76 / 0.14), transparent 50%),
       linear-gradient(160deg, #0e2340 0%, #0b1c36 45%, #071325 100%);
     color: var(--color-snow);
   }
 
   .link-underline {
-    background-image: linear-gradient(var(--color-gold), var(--color-gold));
+    background-image: linear-gradient(currentColor, currentColor);
     background-position: 0 100%;
     background-repeat: no-repeat;
     background-size: 0 1px;
@@ -132,42 +129,39 @@
   }
 
   .animate-fade-up {
-    animation: fade-up 0.7s var(--ease-out-expo) both;
+    animation: fade-up 0.65s var(--ease-out-expo) both;
   }
 
   .animate-fade-in {
-    animation: fade-in 0.5s var(--ease-out-expo) both;
+    animation: fade-in 0.45s var(--ease-out-expo) both;
   }
 
   .animate-scale-in {
-    animation: scale-in 0.65s var(--ease-out-expo) both;
+    animation: scale-in 0.55s var(--ease-out-expo) both;
   }
 
-  .animate-slide-left {
-    animation: slide-left 0.7s var(--ease-out-expo) both;
+  .animate-ken {
+    animation: ken-burns 16s ease-out both;
   }
 
-  .page-transition {
-    transition:
-      opacity 0.28s var(--ease-out-soft),
-      transform 0.28s var(--ease-out-soft);
+  .animate-image-swap {
+    animation: image-swap 0.4s var(--ease-out-expo) both;
   }
 
-  .page-transition-enter {
-    opacity: 1;
-    transform: translateY(0);
+  .animate-press:active {
+    transform: scale(0.97);
   }
 
-  .page-transition-exit {
-    opacity: 0;
-    transform: translateY(10px);
+  .sticky-buy {
+    position: sticky;
+    top: 6.5rem;
   }
 
   .reveal {
     opacity: 0;
     transition:
-      opacity 0.75s var(--ease-out-expo),
-      transform 0.75s var(--ease-out-expo);
+      opacity 0.7s var(--ease-out-expo),
+      transform 0.7s var(--ease-out-expo);
     transition-delay: var(--reveal-delay, 0ms);
     will-change: opacity, transform;
   }
@@ -181,15 +175,15 @@
   }
 
   .reveal-left {
-    transform: translateX(-28px);
+    transform: translateX(-24px);
   }
 
   .reveal-right {
-    transform: translateX(28px);
+    transform: translateX(24px);
   }
 
   .reveal-scale {
-    transform: scale(0.96);
+    transform: scale(0.97);
   }
 
   .reveal.is-visible {
@@ -197,27 +191,49 @@
     transform: none;
   }
 
-  .hover-lift {
-    transition:
-      transform 0.45s var(--ease-out-soft),
-      box-shadow 0.45s var(--ease-out-soft);
-  }
-
-  .hover-lift:hover {
-    transform: translateY(-4px);
-  }
-
   .interactive {
     transition:
-      color 0.3s var(--ease-out-soft),
-      background-color 0.3s var(--ease-out-soft),
-      border-color 0.3s var(--ease-out-soft),
-      opacity 0.3s var(--ease-out-soft),
-      transform 0.3s var(--ease-out-soft);
+      color 0.25s var(--ease-out-soft),
+      background-color 0.25s var(--ease-out-soft),
+      border-color 0.25s var(--ease-out-soft),
+      opacity 0.25s var(--ease-out-soft),
+      transform 0.25s var(--ease-out-soft);
   }
 
   .interactive:active {
     transform: scale(0.98);
+  }
+
+  .rail-scroll {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .rail-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .rail-item {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    width: min(70vw, 16.5rem);
+  }
+
+  @media (min-width: 768px) {
+    .rail-item {
+      width: 17.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .rail-item {
+      width: 19rem;
+    }
   }
 
   .price-range input[type='range'] {
@@ -233,21 +249,21 @@
   .price-range input[type='range']::-webkit-slider-thumb {
     pointer-events: auto;
     appearance: none;
-    height: 16px;
-    width: 16px;
+    height: 14px;
+    width: 14px;
     border: 2px solid var(--color-ink);
     border-radius: 999px;
-    background: var(--color-accent);
+    background: var(--color-snow);
     cursor: pointer;
   }
 
   .price-range input[type='range']::-moz-range-thumb {
     pointer-events: auto;
-    height: 16px;
-    width: 16px;
+    height: 14px;
+    width: 14px;
     border: 2px solid var(--color-ink);
     border-radius: 999px;
-    background: var(--color-accent);
+    background: var(--color-snow);
     cursor: pointer;
   }
 }
@@ -275,7 +291,7 @@
 @keyframes scale-in {
   from {
     opacity: 0;
-    transform: scale(0.96);
+    transform: scale(0.97);
   }
   to {
     opacity: 1;
@@ -283,14 +299,21 @@
   }
 }
 
-@keyframes slide-left {
+@keyframes ken-burns {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.06);
+  }
+}
+
+@keyframes image-swap {
   from {
     opacity: 0;
-    transform: translateX(24px);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
   }
 }
 
@@ -302,10 +325,9 @@
   .animate-fade-up,
   .animate-fade-in,
   .animate-scale-in,
-  .animate-slide-left,
-  .page-transition,
+  .animate-ken,
+  .animate-image-swap,
   .reveal,
-  .hover-lift,
   .interactive {
     animation: none !important;
     transition: none !important;

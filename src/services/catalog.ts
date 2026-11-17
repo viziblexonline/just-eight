@@ -12,6 +12,8 @@ import { mapCategory, mapProduct } from './mappers'
 import {
   getLocalProductById,
   getLocalProductBySlug,
+  listHiddenCategoryIds,
+  listHiddenProductIds,
   listLocalCategories,
   listLocalProducts,
 } from './localCatalog'
@@ -37,26 +39,37 @@ function withAudience(product: Product): Product {
 }
 
 function mergeLocalCatalog(base: Product[]): Product[] {
-  const local = listLocalProducts().map(withAudience)
-  if (!local.length) return base
+  const hidden = new Set(listHiddenProductIds())
+  const local = listLocalProducts()
+    .filter((p) => !hidden.has(p.id))
+    .map(withAudience)
   const localSlugs = new Set(local.map((p) => p.slug))
   const localIds = new Set(local.map((p) => p.id))
-  return [
+  const merged = [
     ...local,
-    ...base.filter((p) => !localSlugs.has(p.slug) && !localIds.has(p.id)),
+    ...base.filter(
+      (p) =>
+        !hidden.has(p.id) && !localSlugs.has(p.slug) && !localIds.has(p.id),
+    ),
   ]
+  return merged
 }
 
 function mergeLocalCategories(base: Category[]): Category[] {
-  const local = listLocalCategories().map((c) => ({
-    id: c.id as Category['id'],
-    name: c.name,
-    description: c.description,
-    image: c.image,
-  }))
-  if (!local.length) return base
+  const hidden = new Set(listHiddenCategoryIds())
+  const local = listLocalCategories()
+    .filter((c) => !hidden.has(c.id))
+    .map((c) => ({
+      id: c.id as Category['id'],
+      name: c.name,
+      description: c.description,
+      image: c.image,
+    }))
   const ids = new Set(local.map((c) => c.id))
-  return [...base.filter((c) => !ids.has(c.id)), ...local]
+  return [
+    ...base.filter((c) => !hidden.has(c.id) && !ids.has(c.id)),
+    ...local,
+  ]
 }
 
 export async function fetchProducts(): Promise<Product[]> {

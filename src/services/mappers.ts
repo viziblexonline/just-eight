@@ -4,6 +4,7 @@ import type {
   Product,
   ProductCategory,
   ProductColor,
+  ProductGalleryImage,
   ProductSize,
 } from '../types'
 import type { DbCategory, DbProduct } from '../types/database'
@@ -14,7 +15,7 @@ function asStringArray(value: unknown): string[] {
 }
 
 function readAudience(row: DbProduct): Audience {
-  const value = (row as DbProduct & { audience?: string }).audience
+  const value = (row as DbProduct & { audience?: string | null }).audience
   if (value === 'women' || value === 'kids' || value === 'men') return value
   return 'men'
 }
@@ -35,9 +36,15 @@ export function mapCategory(row: DbCategory): Category {
 }
 
 export function mapProduct(row: DbProduct): Product {
-  const images = [...(row.product_images ?? [])]
+  const gallery: ProductGalleryImage[] = [...(row.product_images ?? [])]
     .sort((a, b) => a.sort_order - b.sort_order)
-    .map((img) => img.url)
+    .map((img) => ({
+      url: img.url,
+      colorName: img.color_name ?? null,
+      storagePath: img.storage_path,
+    }))
+
+  const images = gallery.map((img) => img.url)
 
   const variants = row.product_variants ?? []
   const sizes = [
@@ -54,6 +61,8 @@ export function mapProduct(row: DbProduct): Product {
   const variantStock = variants.reduce((sum, v) => sum + v.stock, 0)
   const stock = variants.length > 0 ? variantStock : row.stock
   const salePrice = asNumber(row.sale_price)
+  const fallback =
+    'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=1200&q=80'
 
   return {
     id: row.id,
@@ -66,12 +75,11 @@ export function mapProduct(row: DbProduct): Product {
     salePrice,
     category: row.category_id as ProductCategory,
     audience: readAudience(row),
-    images:
-      images.length > 0
-        ? images
-        : [
-            'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=1200&q=80',
-          ],
+    images: images.length > 0 ? images : [fallback],
+    gallery:
+      gallery.length > 0
+        ? gallery
+        : [{ url: fallback, colorName: null }],
     sizes: sizes.length > 0 ? sizes : (['M', 'L'] as ProductSize[]),
     colors:
       colorMap.size > 0

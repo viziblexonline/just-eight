@@ -1,5 +1,5 @@
-export function formatPrice(amount: number, currency = 'USD'): string {
-  return new Intl.NumberFormat('en-US', {
+export function formatPrice(amount: number, currency = 'GBP'): string {
+  return new Intl.NumberFormat('en-GB', {
     style: 'currency',
     currency,
     minimumFractionDigits: 0,
@@ -8,7 +8,7 @@ export function formatPrice(amount: number, currency = 'USD'): string {
 }
 
 export function formatDate(iso: string): string {
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat('en-GB', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',

@@ -23,9 +23,9 @@ const PAD = { top: 18, right: 8, bottom: 32, left: 52 }
 function compactMoney(amount: number) {
   if (amount >= 1000) {
     const value = amount / 1000
-    return `$${value >= 10 ? Math.round(value) : value.toFixed(1)}k`
+    return `£${value >= 10 ? Math.round(value) : value.toFixed(1)}k`
   }
-  return `$${Math.round(amount)}`
+  return `£${Math.round(amount)}`
 }
 
 export function SalesChart() {

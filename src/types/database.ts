@@ -35,6 +35,7 @@ export interface DbProductImage {
   storage_path: string | null
   alt: string
   sort_order: number
+  color_name?: string | null
 }
 
 export interface DbProductVariant {

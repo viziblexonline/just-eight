@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from 'react'
 import { getEffectivePrice } from '../data/products'
+import { imagesForColor } from '../lib/products'
 import { readStorage, writeStorage } from '../lib/storage'
 import type { CartItem, Product, ProductSize } from '../types'
 
@@ -86,7 +87,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           quantity: Math.min(nextQty, product.stock),
           unitPrice,
           name: product.name,
-          image: product.images[0] ?? '',
+          image: imagesForColor(product, color)[0] ?? product.images[0] ?? '',
           slug: product.slug,
           maxStock: product.stock,
         }

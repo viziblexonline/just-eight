@@ -1,30 +1,29 @@
 import { Link } from 'react-router-dom'
-import { Button } from '../ui/Button'
 import { Reveal } from '../ui/Reveal'
 
 export function PromoBanner() {
   return (
-    <section className="bg-mist">
-      <div className="container-je grid items-center gap-10 py-16 md:grid-cols-2 md:py-0">
-        <Reveal className="md:py-20">
-          <p className="text-xs uppercase tracking-[0.2em] text-mute">Limited drop</p>
-          <h2 className="mt-4 max-w-md font-display text-4xl font-bold tracking-tight md:text-5xl">
-            Outerwear season starts here.
-          </h2>
-          <p className="mt-5 max-w-md text-sm leading-relaxed text-mute md:text-base">
-            Explore jackets and layers built for cool mornings and late evenings.
-            Placeholder offer — update copy and dates when confirmed.
+    <section className="relative isolate overflow-hidden">
+      <img
+        src="https://images.unsplash.com/photo-1558171813-4c088753af8f?auto=format&fit=crop&w=1800&q=80"
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      <div className="absolute inset-0 bg-black/45" />
+      <div className="container-je relative py-24 text-center text-snow md:py-32">
+        <Reveal>
+          <p className="text-[11px] font-medium uppercase tracking-[0.28em]">
+            Limited drop
           </p>
-          <Link to="/shop?category=jackets" className="mt-8 inline-block">
-            <Button>Shop Outerwear</Button>
+          <h2 className="mt-4 text-3xl font-medium tracking-[0.06em] uppercase md:text-5xl">
+            Outerwear season
+          </h2>
+          <Link
+            to="/shop?category=jackets"
+            className="mt-8 inline-flex items-center justify-center border border-snow px-8 py-3.5 text-[11px] font-medium uppercase tracking-[0.18em] transition-colors hover:bg-snow hover:text-ink"
+          >
+            Shop outerwear
           </Link>
-        </Reveal>
-        <Reveal variant="right" delay={120} className="relative min-h-[320px] overflow-hidden md:min-h-[480px]">
-          <img
-            src="https://images.unsplash.com/photo-1548126032-077ad0b3f520?auto=format&fit=crop&w=1400&q=80"
-            alt="JUST EIGHT outerwear"
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.03]"
-          />
         </Reveal>
       </div>
     </section>

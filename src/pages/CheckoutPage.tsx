@@ -86,12 +86,11 @@ export function CheckoutPage() {
 
   return (
     <div className="container-je py-10 md:py-14">
-      <h1 className="font-display text-4xl font-bold tracking-tight md:text-5xl">
+      <h1 className="text-3xl font-medium tracking-tight md:text-5xl">
         Checkout
       </h1>
       <p className="mt-3 max-w-2xl text-sm text-mute">
-        This checkout collects order details for demonstration only. No real
-        payment is processed and no order is sent to a fulfillment system yet.
+        Enter your details to place a demo order. No real payment is processed yet.
       </p>
 
       <form
@@ -101,9 +100,7 @@ export function CheckoutPage() {
       >
         <div className="space-y-8">
           <section className="space-y-4">
-            <h2 className="font-display text-xl font-semibold">
-              Contact details
-            </h2>
+            <h2 className="text-lg font-medium">Contact details</h2>
             <Input
               label="Full name"
               name="fullName"
@@ -144,9 +141,7 @@ export function CheckoutPage() {
           </section>
 
           <section className="space-y-4">
-            <h2 className="font-display text-xl font-semibold">
-              Shipping address
-            </h2>
+            <h2 className="text-lg font-medium">Shipping address</h2>
             <Input
               label="Address"
               name="address"
@@ -185,9 +180,7 @@ export function CheckoutPage() {
           </section>
 
           <section className="space-y-4">
-            <h2 className="font-display text-xl font-semibold">
-              Payment method
-            </h2>
+            <h2 className="text-lg font-medium">Payment method</h2>
             <p className="text-sm text-mute">
               Placeholder options only — connect a payment provider before going
               live.
@@ -227,7 +220,7 @@ export function CheckoutPage() {
         </div>
 
         <aside className="h-fit border border-line p-6">
-          <h2 className="font-display text-xl font-semibold">Order summary</h2>
+          <h2 className="text-lg font-medium">Order summary</h2>
           <ul className="mt-6 space-y-4">
             {lineItems.map((item) => (
               <li

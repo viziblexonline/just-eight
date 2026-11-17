@@ -1,6 +1,40 @@
 import { products } from '../data/products'
-import type { Audience, Product, ProductCategory, SortOption } from '../types'
+import type {
+  Audience,
+  Product,
+  ProductCategory,
+  ProductGalleryImage,
+  SortOption,
+} from '../types'
 import { getEffectivePrice } from '../data/products'
+
+export function getProductGallery(product: Product): ProductGalleryImage[] {
+  if (product.gallery?.length) return product.gallery
+  return (product.images ?? []).map((url) => ({ url, colorName: null }))
+}
+
+/** Images for a selected color; falls back to shared, then all. */
+export function imagesForColor(
+  product: Product,
+  colorName: string | null | undefined,
+): string[] {
+  const gallery = getProductGallery(product)
+  if (!gallery.length) return product.images ?? []
+
+  if (colorName) {
+    const matched = gallery
+      .filter((img) => img.colorName === colorName)
+      .map((img) => img.url)
+    if (matched.length) return matched
+  }
+
+  const shared = gallery
+    .filter((img) => !img.colorName)
+    .map((img) => img.url)
+  if (shared.length) return shared
+
+  return gallery.map((img) => img.url)
+}
 
 export function matchesAudienceQuery(audience: Audience, query: string): boolean {
   if (audience === 'men') return query === 'men' || query === 'mens' || query === 'menswear'

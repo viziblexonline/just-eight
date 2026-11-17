@@ -1,6 +1,8 @@
 # JUST EIGHT × Supabase setup
 
-Target project name: **just-eight-store**
+Target project name: **just-eight-store**  
+Project ref: **srtzbpagjuwvbywnwuqg**  
+Dashboard: https://supabase.com/dashboard/project/srtzbpagjuwvbywnwuqg
 
 The frontend only uses the **anon / publishable** key. Never put the **service_role** key in Vite env vars or commit it.
 

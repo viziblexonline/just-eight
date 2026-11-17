@@ -54,7 +54,8 @@ export function AdminProductsPage() {
             Products
           </h1>
           <p className="mt-2 text-sm text-mute">
-            Add, edit, and delete catalog items with image uploads.
+            Add, edit, and delete catalog items — including default/seed
+            products. Editing a demo item saves it as a live product.
           </p>
         </div>
         <Link to="/admin/products/new">
@@ -105,7 +106,7 @@ export function AdminProductsPage() {
                   </td>
                   <td className="px-4 py-3">{product.stock}</td>
                   <td className="px-4 py-3">
-                    {product.isDemo ? 'Demo' : 'Live'}
+                    {product.isDemo ? 'Default · editable' : 'Live'}
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-3">

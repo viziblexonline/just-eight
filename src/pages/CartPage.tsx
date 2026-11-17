@@ -14,10 +14,9 @@ export function CartPage() {
   if (items.length === 0) {
     return (
       <EmptyState
-        icon={<span className="font-display text-5xl font-bold">0</span>}
-        title="Your cart is empty"
+        title="Your bag is empty"
         description="Discover the JUST EIGHT collection and add pieces you love."
-        actionLabel="Continue Shopping"
+        actionLabel="Continue shopping"
         actionTo="/shop"
       />
     )
@@ -25,12 +24,8 @@ export function CartPage() {
 
   return (
     <div className="container-je py-10 md:py-14">
-      <h1 className="font-display text-4xl font-semibold tracking-tight md:text-5xl">
-        Shopping Cart
-      </h1>
-      <p className="mt-3 text-sm text-mute">
-        Cart is saved in this browser and persists across refreshes.
-      </p>
+      <h1 className="text-3xl font-medium tracking-tight md:text-5xl">Shopping bag</h1>
+      <p className="mt-2 text-sm text-mute">{items.length} item{items.length === 1 ? '' : 's'}</p>
 
       <div className="mt-10 grid gap-12 lg:grid-cols-[1fr_340px]">
         <ul className="divide-y divide-line border-y border-line">
@@ -39,43 +34,32 @@ export function CartPage() {
             return (
               <li
                 key={`${item.productId}-${item.size}-${item.color}`}
-                className="grid gap-4 py-6 sm:grid-cols-[120px_1fr_auto]"
+                className="grid gap-4 py-6 sm:grid-cols-[100px_1fr_auto]"
               >
                 <Link
                   to={`/product/${item.slug}`}
                   className="aspect-[3/4] overflow-hidden bg-mist"
                 >
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="h-full w-full object-cover"
-                  />
+                  <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
                 </Link>
                 <div>
                   <Link
                     to={`/product/${item.slug}`}
-                    className="font-display text-xl font-semibold hover:opacity-70"
+                    className="text-base font-medium hover:opacity-60"
                   >
                     {item.name}
                   </Link>
                   <p className="mt-2 text-sm text-mute">
                     {item.color} / {item.size}
                   </p>
-                  <p className="mt-1 text-sm font-medium">
-                    {formatPrice(item.unitPrice)}
-                  </p>
+                  <p className="mt-1 text-sm">{formatPrice(item.unitPrice)}</p>
                   <div className="mt-4">
                     <QuantitySelector
                       value={item.quantity}
                       min={1}
                       max={item.maxStock || 99}
                       onChange={(q) =>
-                        updateQuantity(
-                          item.productId,
-                          item.size,
-                          item.color,
-                          q,
-                        )
+                        updateQuantity(item.productId, item.size, item.color, q)
                       }
                     />
                   </div>
@@ -85,12 +69,10 @@ export function CartPage() {
                   <button
                     type="button"
                     aria-label={`Remove ${item.name}`}
-                    className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.14em] text-mute transition-colors hover:text-ink"
-                    onClick={() =>
-                      removeItem(item.productId, item.size, item.color)
-                    }
+                    className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.14em] text-mute hover:text-ink"
+                    onClick={() => removeItem(item.productId, item.size, item.color)}
                   >
-                    <Trash2 size={16} /> Remove
+                    <Trash2 size={14} /> Remove
                   </button>
                 </div>
               </li>
@@ -98,38 +80,32 @@ export function CartPage() {
           })}
         </ul>
 
-        <aside className="h-fit border border-line p-6">
-          <h2 className="font-display text-xl font-semibold">Order Summary</h2>
+        <aside className="h-fit border border-line bg-paper/50 p-6">
+          <h2 className="text-lg font-medium">Order summary</h2>
           <dl className="mt-6 space-y-3 text-sm">
             <div className="flex justify-between">
               <dt className="text-mute">Subtotal</dt>
               <dd>{formatPrice(subtotal)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-mute">Shipping estimate</dt>
-              <dd>
-                {shippingEstimate === 0
-                  ? 'Free'
-                  : formatPrice(shippingEstimate)}
-              </dd>
+              <dt className="text-mute">Shipping</dt>
+              <dd>{shippingEstimate === 0 ? 'Free' : formatPrice(shippingEstimate)}</dd>
             </div>
             <div className="flex justify-between border-t border-line pt-3 text-base font-medium">
               <dt>Total</dt>
               <dd>{formatPrice(total)}</dd>
             </div>
           </dl>
-          <p className="mt-4 text-xs leading-relaxed text-mute">
-            Shipping cost is a placeholder. Free shipping threshold demo: $150.
-          </p>
           <Link to="/checkout" className="mt-6 block">
             <Button fullWidth size="lg">
               Checkout
             </Button>
           </Link>
-          <Link to="/shop" className="mt-3 block">
-            <Button fullWidth variant="ghost">
-              Continue Shopping
-            </Button>
+          <Link
+            to="/shop"
+            className="mt-4 block text-center text-[11px] uppercase tracking-[0.14em] text-mute hover:text-ink"
+          >
+            Continue shopping
           </Link>
         </aside>
       </div>

@@ -18,23 +18,23 @@ export function QuantitySelector({
       <button
         type="button"
         aria-label="Decrease quantity"
-        className="grid h-11 w-11 place-items-center text-ink transition-colors hover:bg-mist disabled:opacity-40"
+        className="animate-press grid h-12 w-12 place-items-center text-ink transition-colors hover:bg-mist disabled:opacity-40"
         disabled={value <= min}
         onClick={() => onChange(Math.max(min, value - 1))}
       >
-        <Minus size={16} />
+        <Minus size={16} strokeWidth={1.5} />
       </button>
-      <span className="min-w-10 text-center text-sm font-medium tabular-nums">
+      <span className="min-w-12 text-center text-sm font-semibold tabular-nums">
         {value}
       </span>
       <button
         type="button"
         aria-label="Increase quantity"
-        className="grid h-11 w-11 place-items-center text-ink transition-colors hover:bg-mist disabled:opacity-40"
+        className="animate-press grid h-12 w-12 place-items-center text-ink transition-colors hover:bg-mist disabled:opacity-40"
         disabled={value >= max}
         onClick={() => onChange(Math.min(max, value + 1))}
       >
-        <Plus size={16} />
+        <Plus size={16} strokeWidth={1.5} />
       </button>
     </div>
   )

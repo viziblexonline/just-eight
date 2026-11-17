@@ -2,12 +2,14 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { CatalogProvider } from './context/CatalogContext'
 import { CartProvider } from './context/CartContext'
+import { WishlistProvider } from './context/WishlistContext'
 import { Layout } from './components/layout/Layout'
 import { AdminLayout } from './components/admin/AdminLayout'
 import { HomePage } from './pages/HomePage'
 import { ShopPage } from './pages/ShopPage'
 import { ProductDetailPage } from './pages/ProductDetailPage'
 import { CartPage } from './pages/CartPage'
+import { WishlistPage } from './pages/WishlistPage'
 import { CheckoutPage } from './pages/CheckoutPage'
 import { OrderConfirmationPage } from './pages/OrderConfirmationPage'
 import { AboutPage } from './pages/AboutPage'
@@ -35,6 +37,7 @@ export default function App() {
     <AuthProvider>
       <CatalogProvider>
         <CartProvider>
+          <WishlistProvider>
           <BrowserRouter>
             <Routes>
               <Route element={<Layout />}>
@@ -42,6 +45,7 @@ export default function App() {
                 <Route path="shop" element={<ShopPage />} />
                 <Route path="product/:slug" element={<ProductDetailPage />} />
                 <Route path="cart" element={<CartPage />} />
+                <Route path="wishlist" element={<WishlistPage />} />
                 <Route path="checkout" element={<CheckoutPage />} />
                 <Route
                   path="order-confirmation/:orderId"
@@ -75,6 +79,7 @@ export default function App() {
               </Route>
             </Routes>
           </BrowserRouter>
+          </WishlistProvider>
         </CartProvider>
       </CatalogProvider>
     </AuthProvider>

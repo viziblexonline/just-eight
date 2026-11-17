@@ -16,6 +16,13 @@ export interface ProductColor {
   hex: string
 }
 
+/** Gallery image; colorName null = shared / all colors fallback */
+export interface ProductGalleryImage {
+  url: string
+  colorName: string | null
+  storagePath?: string | null
+}
+
 export interface Product {
   id: string
   slug: string
@@ -27,7 +34,10 @@ export interface Product {
   salePrice?: number
   category: ProductCategory
   audience: Audience
+  /** Flat URLs for cards / fallback */
   images: string[]
+  /** Color-aware gallery for PDP (optional on legacy/demo rows) */
+  gallery?: ProductGalleryImage[]
   sizes: ProductSize[]
   colors: ProductColor[]
   stock: number
